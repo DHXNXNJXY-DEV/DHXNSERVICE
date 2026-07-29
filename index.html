@@ -3,23 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DHXN Service Mail</title>
+  <title>DHXN Service Mail Portal</title>
   
-  <!-- Supabase CDN (Runs in browser without Node.js) -->
+  <!-- Supabase JS Client (Runs directly in browser, no Node.js required) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
     body { margin: 0; background: #f1f5f9; color: #0f172a; height: 100vh; display: flex; flex-direction: column; }
 
-    /* Layout Structure */
+    /* Main Responsive Container */
     .app-layout { display: flex; flex: 1; height: 100vh; }
-    .sidebar { width: 260px; background: #0f172a; color: white; padding: 20px; display: flex; flex-direction: column; }
+    .sidebar { width: 280px; background: #0f172a; color: white; padding: 20px; display: flex; flex-direction: column; }
     .main-view { flex: 1; padding: 20px; overflow-y: auto; background: #f8fafc; }
 
-    /* Typography & Badges */
+    /* Typography & Styling */
     h2 { font-size: 1.3rem; margin: 0 0 5px 0; color: #38bdf8; }
-    .domain-tag { background: #e0f2fe; color: #0284c7; padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 0.8rem; }
+    .domain-tag { background: #e0f2fe; color: #0284c7; padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 0.85rem; }
     
     /* Buttons & Inputs */
     .btn { background: #0284c7; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 0.95rem; }
@@ -29,42 +29,42 @@
 
     input, textarea { width: 100%; padding: 12px; margin-top: 6px; margin-bottom: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; }
 
-    /* Navigation Tabs */
+    /* Inbox / Sent Navigation Tabs */
     .tabs { display: flex; gap: 10px; margin-bottom: 15px; }
     .tab-btn { flex: 1; padding: 10px; background: white; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: bold; cursor: pointer; color: #64748b; }
     .tab-btn.active { background: #0284c7; color: white; border-color: #0284c7; }
 
-    /* Email Item Cards */
+    /* Email Cards */
     .email-card { background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
     .email-card h4 { margin: 0 0 6px 0; font-size: 1.05rem; color: #1e293b; }
     .email-meta { font-size: 0.82rem; color: #64748b; margin-bottom: 10px; }
     .email-body { color: #334155; font-size: 0.95rem; white-space: pre-line; }
 
-    /* Modal overlay */
+    /* Modal Popup */
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; padding: 15px; z-index: 100; }
     .modal-box { background: white; width: 100%; max-width: 480px; padding: 20px; border-radius: 12px; }
 
-    /* Utility */
+    /* Utilities */
     .hidden { display: none !important; }
 
-    /* Mobile Responsive Adjustments */
+    /* Mobile Friendly Layout Rules */
     @media (max-width: 768px) {
       .app-layout { flex-direction: column; }
       .sidebar { width: 100%; height: auto; padding: 15px; }
-      .btn-danger { margin-top: 10px; }
+      .btn-danger { margin-top: 15px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- 1. AUTHENTICATION SCREEN -->
-  <div id="auth-screen" style="max-width: 400px; margin: 60px auto; width: 90%; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+  <!-- 1. LOGIN & REGISTER SCREEN -->
+  <div id="auth-screen" style="max-width: 420px; margin: 50px auto; width: 90%; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
     <h2>DHXN Webmail</h2>
     <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 20px;">Access your <span class="domain-tag">@dhxnservice.com</span> account</p>
     
     <label style="font-size: 0.85rem; font-weight: bold; color: #475569;">Username</label>
     <div style="display: flex; align-items: center; gap: 4px;">
-      <input type="text" id="auth-username" placeholder="username">
+      <input type="text" id="auth-username" placeholder="e.g. dhxn">
       <span style="font-weight: bold; color: #64748b; font-size: 0.9rem;">@dhxnservice.com</span>
     </div>
 
@@ -75,18 +75,18 @@
     <button class="btn btn-secondary" onclick="handleAuth('signup')">Create Account</button>
   </div>
 
-  <!-- 2. MAIN APP PORTAL -->
+  <!-- 2. MAIN WEBMAIL INTERFACE -->
   <div id="app-screen" class="app-layout hidden">
     <!-- Sidebar -->
     <div class="sidebar">
-      <h2>DHXN Service</h2>
+      <h2>DHXN Mail</h2>
       <p id="user-display" style="font-size: 0.85rem; color: #94a3b8; word-break: break-all; margin-bottom: 20px;"></p>
       
       <button class="btn" onclick="toggleComposeModal(true)">+ Compose Email</button>
       <button class="btn btn-danger" onclick="logout()">Sign Out</button>
     </div>
 
-    <!-- Main Content Area -->
+    <!-- Main View -->
     <div class="main-view">
       <div class="tabs">
         <button id="tab-inbox" class="tab-btn active" onclick="switchTab('inbox')">Inbox</button>
@@ -97,14 +97,14 @@
     </div>
   </div>
 
-  <!-- 3. COMPOSE MESSAGE MODAL -->
+  <!-- 3. COMPOSE MODAL -->
   <div id="compose-modal" class="modal-overlay hidden">
     <div class="modal-box">
       <h3 style="margin-top: 0;">New Email</h3>
       
-      <input type="email" id="msg-to" placeholder="To: recipient@dhxnservice.com">
+      <input type="email" id="msg-to" placeholder="To: username@dhxnservice.com">
       <input type="text" id="msg-subject" placeholder="Subject">
-      <textarea id="msg-body" rows="6" placeholder="Write your email here..."></textarea>
+      <textarea id="msg-body" rows="6" placeholder="Write your message here..."></textarea>
       
       <div style="display: flex; gap: 10px;">
         <button class="btn btn-secondary" onclick="toggleComposeModal(false)">Cancel</button>
@@ -124,22 +124,39 @@
     let currentUser = null;
     let currentTab = 'inbox';
 
-    // AUTHENTICATION LOGIC
+    // AUTHENTICATION (Includes fix for "Invalid email" error)
     async function handleAuth(type) {
-      const user = document.getElementById('auth-username').value.trim().toLowerCase();
+      let usernameInput = document.getElementById('auth-username').value.trim().toLowerCase();
       const pass = document.getElementById('auth-password').value;
 
-      if (!user || !pass) return alert("Please enter both username and password!");
+      if (!usernameInput || !pass) {
+        return alert("Please enter both username and password!");
+      }
 
-      const fullEmail = `${user}@dhxnservice.com`;
+      // Remove invalid email characters or spaces from username
+      const cleanUser = usernameInput.replace(/[^a-z0-9._-]/g, '');
+      const fullEmail = `${cleanUser}@dhxnservice.com`;
 
-      let res = type === 'signup' 
-        ? await db.auth.signUp({ email: fullEmail, password: pass })
-        : await db.auth.signInWithPassword({ email: fullEmail, password: pass });
+      let res;
+      if (type === 'signup') {
+        res = await db.auth.signUp({ 
+          email: fullEmail, 
+          password: pass,
+          options: {
+            emailRedirectTo: window.location.href
+          }
+        });
+      } else {
+        res = await db.auth.signInWithPassword({ 
+          email: fullEmail, 
+          password: pass 
+        });
+      }
 
       if (res.error) {
         alert("Auth Error: " + res.error.message);
       } else {
+        if (type === 'signup') alert("Account created successfully!");
         checkSession();
       }
     }
@@ -163,7 +180,7 @@
       checkSession();
     }
 
-    // LOAD EMAILS FROM SUPABASE DATABASE
+    // FETCH EMAILS FROM SUPABASE DATABASE
     async function loadEmails() {
       const listContainer = document.getElementById('email-list');
       listContainer.innerHTML = "<p style='color:#64748b;'>Fetching messages...</p>";
@@ -211,17 +228,23 @@
       document.getElementById('compose-modal').classList.toggle('hidden', !show);
     }
 
-    // SEND EMAIL (SAVING TO SUPABASE DATABASE)
+    // SEND AND STORE EMAIL
     async function sendEmail() {
-      const recipient = document.getElementById('msg-to').value.trim().toLowerCase();
+      let recipientInput = document.getElementById('msg-to').value.trim().toLowerCase();
       const subject = document.getElementById('msg-subject').value;
       const body = document.getElementById('msg-body').value;
 
-      if (!recipient || !body) return alert("Recipient and message content are required!");
+      if (!recipientInput || !body) return alert("Recipient and message content are required!");
+
+      // Auto-append @dhxnservice.com if the user only typed a username
+      let fullRecipient = recipientInput;
+      if (!fullRecipient.includes('@')) {
+        fullRecipient = `${recipientInput}@dhxnservice.com`;
+      }
 
       const { error } = await db.from('emails').insert([{
         sender: currentUser.email,
-        recipient: recipient,
+        recipient: fullRecipient,
         subject: subject,
         body: body
       }]);
@@ -229,7 +252,7 @@
       if (error) {
         alert("Error sending message: " + error.message);
       } else {
-        alert("Message delivered!");
+        alert("Message sent and saved!");
         document.getElementById('msg-to').value = '';
         document.getElementById('msg-subject').value = '';
         document.getElementById('msg-body').value = '';
@@ -238,7 +261,7 @@
       }
     }
 
-    // Start App Check
+    // Check active user on load
     checkSession();
   </script>
 </body>
