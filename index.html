@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DHXN Service Mail Portal</title>
   
-  <!-- Supabase CDN (Runs directly in browser, no Node.js needed) -->
+  <!-- Supabase CDN (Runs directly in browser without Node.js) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
@@ -17,11 +17,11 @@
     .sidebar { width: 280px; background: #0f172a; color: white; padding: 20px; display: flex; flex-direction: column; }
     .main-view { flex: 1; padding: 20px; overflow-y: auto; background: #f8fafc; }
 
-    /* UI Styling */
+    /* Styling & Typography */
     h2 { font-size: 1.3rem; margin: 0 0 5px 0; color: #38bdf8; }
     .domain-tag { background: #e0f2fe; color: #0284c7; padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 0.85rem; }
     
-    /* Buttons & Controls */
+    /* Buttons & Inputs */
     .btn { background: #0284c7; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 0.95rem; }
     .btn:active { opacity: 0.9; }
     .btn-secondary { background: #475569; margin-top: 8px; }
@@ -40,7 +40,7 @@
     .email-meta { font-size: 0.82rem; color: #64748b; margin-bottom: 10px; }
     .email-body { color: #334155; font-size: 0.95rem; white-space: pre-line; }
 
-    /* Modals & Overlays */
+    /* Modals & Popups */
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; padding: 15px; z-index: 100; }
     .modal-box { background: white; width: 100%; max-width: 480px; padding: 20px; border-radius: 12px; }
 
@@ -49,7 +49,7 @@
 
     .hidden { display: none !important; }
 
-    /* Mobile View Responsive Rules */
+    /* Mobile Responsive Rules */
     @media (max-width: 768px) {
       .app-layout { flex-direction: column; }
       .sidebar { width: 100%; height: auto; padding: 15px; }
@@ -59,7 +59,7 @@
 </head>
 <body>
 
-  <!-- 1. AUTHENTICATION (LOGIN / SIGNUP) -->
+  <!-- 1. LOGIN & REGISTER SCREEN -->
   <div id="auth-screen" style="max-width: 420px; margin: 50px auto; width: 90%; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
     <h2>DHXN Webmail</h2>
     <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 20px;">Access your <span class="domain-tag">@dhxnservice.com</span> account</p>
@@ -104,7 +104,7 @@
     <div class="modal-box">
       <h3 style="margin-top: 0;">New Message</h3>
       
-      <input type="text" id="msg-to" placeholder="To: username or user@dhxnservice.com">
+      <input type="text" id="msg-to" placeholder="To: user@dhxnservice.com or someone@gmail.com">
       <input type="text" id="msg-subject" placeholder="Subject">
       <textarea id="msg-body" rows="6" placeholder="Write your message here..."></textarea>
       
@@ -116,9 +116,10 @@
   </div>
 
   <script>
-    // ⚠️ REPLACE WITH YOUR ACTUAL SUPABASE CREDENTIALS
+    // ⚠️ REPLACE WITH YOUR ACTUAL KEYS
     const SUPABASE_URL = "https://mcrlnehrfnelwsoopced.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jcmxuZWhyZm5lbHdzb29wY2VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUyNjA2MzgsImV4cCI6MjEwMDgzNjYzOH0.nVDRslP4iGP_Vq8CvNkRWhvu4uZUXeRq2puIBke-CoY";
+    const RESEND_API_KEY = "re_KTw38NWr_8pPVfq8th6Ryo9YVdtZ8qAp4"; // From resend.com
 
     const { createClient } = supabase;
     const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -238,13 +239,13 @@
       document.getElementById('compose-modal').classList.toggle('hidden', !show);
     }
 
-    // SEND MESSAGE LOGIC
+    // SMART SEND EMAIL (SUPABASE INTERNAL + RESEND FOR GMAIL/EXTERNAL)
     async function sendEmail() {
       let recipientInput = document.getElementById('msg-to').value.trim().toLowerCase();
       const subject = document.getElementById('msg-subject').value;
       const body = document.getElementById('msg-body').value;
 
-      if (!recipientInput || !body) return alert("Recipient and message body are required!");
+      if (!recipientInput || !body) return alert("Recipient and message content are required!");
 
       // Auto-append domain if missing
       let fullRecipient = recipientInput;
@@ -252,22 +253,52 @@
         fullRecipient = `${recipientInput}@dhxnservice.com`;
       }
 
-      const { error } = await db.from('emails').insert([{
-        sender: currentUser.email,
-        recipient: fullRecipient,
-        subject: subject,
-        body: body
-      }]);
+      try {
+        // 1. Send via Resend API if emailing external accounts (Gmail, Yahoo, Outlook, etc.)
+        if (!fullRecipient.endsWith('@dhxnservice.com')) {
+          if (!RESEND_API_KEY || RESEND_API_KEY.includes('YOUR_RESEND_API_KEY')) {
+            return alert("Please configure your RESEND_API_KEY to send emails to external providers like Gmail!");
+          }
 
-      if (error) {
-        alert("Error sending email: " + error.message);
-      } else {
-        alert("Message delivered!");
+          const apiResponse = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${RESEND_API_KEY}`
+            },
+            body: JSON.stringify({
+              from: 'onboarding@resend.dev', // Use your verified domain once added in Resend
+              to: [fullRecipient],
+              subject: subject || '(No Subject)',
+              text: body
+            })
+          });
+
+          const resendData = await apiResponse.json();
+          if (!apiResponse.ok) {
+            throw new Error(resendData.message || "Failed to deliver email to external provider");
+          }
+        }
+
+        // 2. Log message record into Supabase database
+        const { error } = await db.from('emails').insert([{
+          sender: currentUser.email,
+          recipient: fullRecipient,
+          subject: subject,
+          body: body
+        }]);
+
+        if (error) throw error;
+
+        alert("Message delivered successfully!");
         document.getElementById('msg-to').value = '';
         document.getElementById('msg-subject').value = '';
         document.getElementById('msg-body').value = '';
         toggleComposeModal(false);
         switchTab('sent');
+
+      } catch (err) {
+        alert("Error sending email: " + err.message);
       }
     }
 
