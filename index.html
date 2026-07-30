@@ -37,24 +37,19 @@
 
     /* AUTHENTICATION SCREEN */
     #auth-screen { display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f4f9; padding: 12px; }
-    
     .g-auth-card { background: var(--gm-surface); width: 100%; max-width: 448px; padding: 40px; border-radius: 28px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); display: flex; flex-direction: column; }
     
-    /* Custom DHXN Logo SVG */
     .dhxn-logo { width: 52px; height: 52px; margin-bottom: 16px; }
     .g-title { font-family: 'Google Sans', sans-serif; font-size: 24px; font-weight: 500; color: var(--gm-text-main); margin-bottom: 8px; }
     .g-subtitle { font-size: 15px; color: var(--gm-text-sub); margin-bottom: 32px; }
 
-    /* Floating Material Outline Inputs */
     .g-input-field { position: relative; margin-bottom: 20px; width: 100%; }
     .g-input { width: 100%; height: 56px; padding: 16px; border: 1px solid var(--gm-border); border-radius: 8px; font-size: 16px; outline: none; background: transparent; color: var(--gm-text-main); transition: border-color 0.2s; }
     .g-input:focus { border-color: var(--gm-primary); border-width: 2px; }
     
     .g-label { position: absolute; left: 12px; top: -10px; background: var(--gm-surface); padding: 0 4px; font-size: 12px; color: var(--gm-primary); font-weight: 500; }
-    
     .domain-badge-text { font-size: 12px; color: var(--gm-text-sub); margin-top: -12px; margin-bottom: 24px; font-weight: 500; }
 
-    /* Actions Layout */
     .g-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
     .g-btn-text { background: transparent; border: none; color: var(--gm-primary); font-family: 'Google Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; padding: 10px 12px; border-radius: 20px; }
     .g-btn-text:hover { background: #f0f4f9; }
@@ -98,7 +93,10 @@
     /* GMAIL ROW STYLE */
     .email-row { display: flex; align-items: center; height: 48px; padding: 0 16px; border-bottom: 1px solid #f2f2f2; cursor: pointer; font-size: 14px; }
     .email-row:hover { box-shadow: inset 1px 0 0 #dadce0, inset -1px 0 0 #dadce0, 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15); z-index: 1; }
-    .email-row-sender { width: 200px; font-weight: 700; color: var(--gm-text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .email-row.selected { background: #c2e7ff; }
+    
+    .email-checkbox { margin-right: 16px; cursor: pointer; color: #747775; }
+    .email-row-sender { width: 180px; font-weight: 700; color: var(--gm-text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .email-row-content { flex: 1; display: flex; align-items: center; gap: 8px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; padding-right: 16px; }
     .email-row-subject { font-weight: 500; color: var(--gm-text-main); }
     .email-row-snippet { color: var(--gm-text-sub); }
@@ -145,11 +143,9 @@
 </head>
 <body>
 
-  <!-- 1. AUTHENTICATION VIEW (CUSTOM DHXN LOGO) -->
+  <!-- 1. AUTHENTICATION VIEW -->
   <div id="auth-screen">
     <div class="g-auth-card">
-      
-      <!-- Custom Geometric DHXN Envelope Logo -->
       <svg class="dhxn-logo" viewBox="0 0 48 48" fill="none">
         <rect width="48" height="48" rx="12" fill="#0B57D0"/>
         <path d="M12 16L24 26L36 16" stroke="#C2E7FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
@@ -174,7 +170,6 @@
         <button class="g-btn-text" onclick="handleAuth('signup')">Create account</button>
         <button class="g-btn-primary" onclick="handleAuth('login')">Next</button>
       </div>
-
     </div>
   </div>
 
@@ -226,6 +221,16 @@
           <span class="material-symbols-outlined">send</span>
           <span>Sent</span>
         </div>
+
+        <div id="nav-archive" class="nav-item" onclick="switchTab('archive')">
+          <span class="material-symbols-outlined">archive</span>
+          <span>Archive</span>
+        </div>
+
+        <div id="nav-trash" class="nav-item" onclick="switchTab('trash')">
+          <span class="material-symbols-outlined">delete</span>
+          <span>Trash</span>
+        </div>
       </aside>
 
       <!-- Central Mail View -->
@@ -233,23 +238,27 @@
         
         <!-- List Toolbar -->
         <div class="mail-toolbar" id="list-toolbar">
-          <span class="material-symbols-outlined" style="cursor: pointer;">check_box_outline_blank</span>
+          <span class="material-symbols-outlined" id="select-all-checkbox" style="cursor: pointer;" onclick="toggleSelectAll()">check_box_outline_blank</span>
           <span class="material-symbols-outlined" style="cursor: pointer;" onclick="loadEmails()">refresh</span>
-          <span class="material-symbols-outlined" style="cursor: pointer;">more_vert</span>
+          
+          <!-- Batch Action Buttons (Hidden when nothing selected) -->
+          <div id="batch-actions" class="hidden" style="display: flex; gap: 16px; align-items: center;">
+            <span class="material-symbols-outlined" style="cursor: pointer;" title="Archive" onclick="batchArchive()">archive</span>
+            <span class="material-symbols-outlined" style="cursor: pointer;" title="Delete" onclick="batchDelete()">delete</span>
+          </div>
         </div>
 
-        <!-- Detail Toolbar (Hidden by default) -->
+        <!-- Detail Toolbar -->
         <div class="mail-toolbar hidden" id="detail-toolbar">
           <span class="material-symbols-outlined" style="cursor: pointer;" onclick="closeEmailDetail()">arrow_back</span>
-          <span class="material-symbols-outlined" style="cursor: pointer;">archive</span>
-          <span class="material-symbols-outlined" style="cursor: pointer;">delete</span>
-          <span class="material-symbols-outlined" style="cursor: pointer;">mark_as_unread</span>
+          <span class="material-symbols-outlined" style="cursor: pointer;" title="Archive" onclick="singleArchive()">archive</span>
+          <span class="material-symbols-outlined" style="cursor: pointer;" title="Delete" onclick="singleDelete()">delete</span>
         </div>
 
         <!-- Email List Container -->
         <div class="mail-list" id="mail-list-container"></div>
 
-        <!-- Email Single Detail View (Hidden by default) -->
+        <!-- Email Single Detail View -->
         <div class="email-detail-container hidden" id="email-detail-view"></div>
 
       </main>
@@ -269,7 +278,6 @@
       <input type="text" id="msg-subject" class="compose-input" placeholder="Subject">
       <textarea id="msg-body" class="compose-textarea" placeholder=""></textarea>
       
-      <!-- Dynamic File Preview Container -->
       <div id="compose-file-preview"></div>
     </div>
 
@@ -277,7 +285,6 @@
       <div style="display: flex; align-items: center; gap: 12px;">
         <button class="btn-send" id="send-btn" onclick="sendEmail()">Send</button>
 
-        <!-- Attachment Paperclip Icon -->
         <label for="msg-file" style="cursor: pointer; display: flex; align-items: center;">
           <span class="material-symbols-outlined" style="color: var(--gm-text-sub);">attach_file</span>
         </label>
@@ -298,7 +305,9 @@
 
     let currentUser = null;
     let currentTab = 'inbox';
-    let loadedEmailsMap = {}; 
+    let loadedEmailsMap = {};
+    let selectedEmailIds = new Set();
+    let currentOpenedEmailId = null;
 
     // AUTHENTICATION LOGIC
     async function handleAuth(type) {
@@ -344,14 +353,26 @@
     // FETCH EMAILS AND DISPLAY IN INBOX LIST
     async function loadEmails() {
       closeEmailDetail();
+      selectedEmailIds.clear();
+      updateBatchActionsUI();
+
       const listContainer = document.getElementById('mail-list-container');
       listContainer.innerHTML = "<p style='padding:20px; color:var(--gm-text-sub);'>Loading...</p>";
 
       if (!currentUser) return;
 
       let query = db.from('emails').select('*');
-      if (currentTab === 'inbox') query = query.eq('recipient', currentUser.email);
-      else query = query.eq('sender', currentUser.email);
+
+      // Filter based on tab and status
+      if (currentTab === 'inbox') {
+        query = query.eq('recipient', currentUser.email).or('is_archived.is.null,is_archived.eq.false').or('is_deleted.is.null,is_deleted.eq.false');
+      } else if (currentTab === 'sent') {
+        query = query.eq('sender', currentUser.email).or('is_deleted.is.null,is_deleted.eq.false');
+      } else if (currentTab === 'archive') {
+        query = query.eq('recipient', currentUser.email).eq('is_archived', true).or('is_deleted.is.null,is_deleted.eq.false');
+      } else if (currentTab === 'trash') {
+        query = query.or(`sender.eq.${currentUser.email},recipient.eq.${currentUser.email}`).eq('is_deleted', true);
+      }
 
       query = query.order('created_at', { ascending: false });
 
@@ -371,21 +392,110 @@
       emails.forEach(e => loadedEmailsMap[e.id] = e);
 
       listContainer.innerHTML = emails.map(e => `
-        <div class="email-row" onclick="openEmailDetail('${e.id}')">
-          <span class="material-symbols-outlined" style="margin-right: 16px; color: #c4c7c5;">check_box_outline_blank</span>
+        <div class="email-row" id="row-${e.id}">
+          <span class="material-symbols-outlined email-checkbox" id="chk-${e.id}" onclick="event.stopPropagation(); toggleSelectRow('${e.id}')">check_box_outline_blank</span>
           <span class="material-symbols-outlined" style="margin-right: 16px; color: #c4c7c5;">star</span>
-          <div class="email-row-sender">${currentTab === 'inbox' ? e.sender.split('@')[0] : e.recipient.split('@')[0]}</div>
-          <div class="email-row-content">
+          <div class="email-row-sender" onclick="openEmailDetail('${e.id}')">${currentTab === 'inbox' ? e.sender.split('@')[0] : e.recipient.split('@')[0]}</div>
+          <div class="email-row-content" onclick="openEmailDetail('${e.id}')">
             <span class="email-row-subject">${e.subject || '(no subject)'}</span>
             <span class="email-row-snippet">- ${e.body.substring(0, 60)}...</span>
           </div>
-          <div class="email-row-date">${new Date(e.created_at || Date.now()).toLocaleDateString([], {month:'short', day:'numeric'})}</div>
+          <div class="email-row-date" onclick="openEmailDetail('${e.id}')">${new Date(e.created_at || Date.now()).toLocaleDateString([], {month:'short', day:'numeric'})}</div>
         </div>
       `).join('');
     }
 
+    // SELECT / CHECKBOX HANDLING
+    function toggleSelectRow(emailId) {
+      const chk = document.getElementById(`chk-${emailId}`);
+      const row = document.getElementById(`row-${emailId}`);
+
+      if (selectedEmailIds.has(emailId)) {
+        selectedEmailIds.delete(emailId);
+        chk.innerText = 'check_box_outline_blank';
+        row.classList.remove('selected');
+      } else {
+        selectedEmailIds.add(emailId);
+        chk.innerText = 'check_box';
+        row.classList.add('selected');
+      }
+      updateBatchActionsUI();
+    }
+
+    function toggleSelectAll() {
+      const allIds = Object.keys(loadedEmailsMap);
+      const mainChk = document.getElementById('select-all-checkbox');
+
+      if (selectedEmailIds.size === allIds.length) {
+        allIds.forEach(id => {
+          selectedEmailIds.delete(id);
+          const chk = document.getElementById(`chk-${id}`);
+          const row = document.getElementById(`row-${id}`);
+          if (chk) chk.innerText = 'check_box_outline_blank';
+          if (row) row.classList.remove('selected');
+        });
+        mainChk.innerText = 'check_box_outline_blank';
+      } else {
+        allIds.forEach(id => {
+          selectedEmailIds.add(id);
+          const chk = document.getElementById(`chk-${id}`);
+          const row = document.getElementById(`row-${id}`);
+          if (chk) chk.innerText = 'check_box';
+          if (row) row.classList.add('selected');
+        });
+        mainChk.innerText = 'check_box';
+      }
+      updateBatchActionsUI();
+    }
+
+    function updateBatchActionsUI() {
+      const batchBox = document.getElementById('batch-actions');
+      if (selectedEmailIds.size > 0) batchBox.classList.remove('hidden');
+      else batchBox.classList.add('hidden');
+    }
+
+    // BATCH & SINGLE DELETE / ARCHIVE FUNCTIONS
+    async function batchDelete() {
+      if (selectedEmailIds.size === 0) return;
+
+      const ids = Array.from(selectedEmailIds);
+      if (currentTab === 'trash') {
+        // Permanently Delete from DB if already in trash
+        await db.from('emails').delete().in('id', ids);
+      } else {
+        // Move to Trash
+        await db.from('emails').update({ is_deleted: true }).in('id', ids);
+      }
+
+      loadEmails();
+    }
+
+    async function batchArchive() {
+      if (selectedEmailIds.size === 0) return;
+      const ids = Array.from(selectedEmailIds);
+      await db.from('emails').update({ is_archived: true }).in('id', ids);
+      loadEmails();
+    }
+
+    async function singleDelete() {
+      if (!currentOpenedEmailId) return;
+      if (currentTab === 'trash') {
+        await db.from('emails').delete().eq('id', currentOpenedEmailId);
+      } else {
+        await db.from('emails').update({ is_deleted: true }).eq('id', currentOpenedEmailId);
+      }
+      loadEmails();
+    }
+
+    async function singleArchive() {
+      if (!currentOpenedEmailId) return;
+      await db.from('emails').update({ is_archived: true }).eq('id', currentOpenedEmailId);
+      loadEmails();
+    }
+
     // OPEN SINGLE EMAIL (READ VIEW)
     function openEmailDetail(emailId) {
+      currentOpenedEmailId = emailId;
       const email = loadedEmailsMap[emailId];
       if (!email) return;
 
@@ -439,6 +549,7 @@
     }
 
     function closeEmailDetail() {
+      currentOpenedEmailId = null;
       document.getElementById('detail-toolbar').classList.add('hidden');
       document.getElementById('email-detail-view').classList.add('hidden');
       document.getElementById('list-toolbar').classList.remove('hidden');
@@ -447,8 +558,8 @@
 
     function switchTab(tab) {
       currentTab = tab;
-      document.getElementById('nav-inbox').classList.toggle('active', tab === 'inbox');
-      document.getElementById('nav-sent').classList.toggle('active', tab === 'sent');
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      document.getElementById(`nav-${tab}`).classList.add('active');
       loadEmails();
     }
 
