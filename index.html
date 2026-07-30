@@ -3,123 +3,288 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DHXN Service Mail Portal</title>
+  <title>DHXN Mail</title>
   
-  <!-- Supabase CDN (Runs directly in browser without Node.js) -->
+  <!-- Google Fonts & Material Symbols -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+  <!-- Supabase JS Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
-    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-    body { margin: 0; background: #f1f5f9; color: #0f172a; height: 100vh; display: flex; flex-direction: column; }
+    :root {
+      --gm-bg: #f6f8fc;
+      --gm-surface: #ffffff;
+      --gm-primary: #0b57d0;
+      --gm-primary-hover: #0842a0;
+      --gm-primary-container: #c2e7ff;
+      --gm-on-primary-container: #001d35;
+      --gm-text-main: #1f1f1f;
+      --gm-text-sub: #444746;
+      --gm-border: #747775;
+      --gm-hover: #eaedf1;
+      --gm-active: #d3e3fd;
+      --gm-shadow: 0 1px 3px 0 rgba(60,64,67,0.3), 0 4px 8px 3px rgba(60,64,67,0.15);
+    }
 
-    /* Layout */
-    .app-layout { display: flex; flex: 1; height: 100vh; }
-    .sidebar { width: 280px; background: #0f172a; color: white; padding: 20px; display: flex; flex-direction: column; }
-    .main-view { flex: 1; padding: 20px; overflow-y: auto; background: #f8fafc; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Roboto', sans-serif; }
+    body { background-color: var(--gm-bg); color: var(--gm-text-main); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-    /* Styling & Typography */
-    h2 { font-size: 1.3rem; margin: 0 0 5px 0; color: #38bdf8; }
-    .domain-tag { background: #e0f2fe; color: #0284c7; padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 0.85rem; }
+    .material-symbols-outlined { font-family: 'Material Symbols Outlined'; font-weight: normal; font-style: normal; font-size: 20px; line-height: 1; display: inline-block; white-space: nowrap; user-select: none; }
+
+    /* AUTHENTICATION SCREEN */
+    #auth-screen { display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f4f9; padding: 12px; }
     
-    /* Buttons & Inputs */
-    .btn { background: #0284c7; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 0.95rem; }
-    .btn:active { opacity: 0.9; }
-    .btn-secondary { background: #475569; margin-top: 8px; }
-    .btn-danger { background: #ef4444; margin-top: auto; }
+    .g-auth-card { background: var(--gm-surface); width: 100%; max-width: 448px; padding: 40px; border-radius: 28px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); display: flex; flex-direction: column; }
+    
+    /* Custom DHXN Logo SVG */
+    .dhxn-logo { width: 52px; height: 52px; margin-bottom: 16px; }
+    .g-title { font-family: 'Google Sans', sans-serif; font-size: 24px; font-weight: 500; color: var(--gm-text-main); margin-bottom: 8px; }
+    .g-subtitle { font-size: 15px; color: var(--gm-text-sub); margin-bottom: 32px; }
 
-    input, textarea { width: 100%; padding: 12px; margin-top: 6px; margin-bottom: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; }
+    /* Floating Material Outline Inputs */
+    .g-input-field { position: relative; margin-bottom: 20px; width: 100%; }
+    .g-input { width: 100%; height: 56px; padding: 16px; border: 1px solid var(--gm-border); border-radius: 8px; font-size: 16px; outline: none; background: transparent; color: var(--gm-text-main); transition: border-color 0.2s; }
+    .g-input:focus { border-color: var(--gm-primary); border-width: 2px; }
+    
+    .g-label { position: absolute; left: 12px; top: -10px; background: var(--gm-surface); padding: 0 4px; font-size: 12px; color: var(--gm-primary); font-weight: 500; }
+    
+    .domain-badge-text { font-size: 12px; color: var(--gm-text-sub); margin-top: -12px; margin-bottom: 24px; font-weight: 500; }
 
-    /* Tabs */
-    .tabs { display: flex; gap: 10px; margin-bottom: 15px; }
-    .tab-btn { flex: 1; padding: 10px; background: white; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: bold; cursor: pointer; color: #64748b; }
-    .tab-btn.active { background: #0284c7; color: white; border-color: #0284c7; }
+    /* Actions Layout */
+    .g-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
+    .g-btn-text { background: transparent; border: none; color: var(--gm-primary); font-family: 'Google Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; padding: 10px 12px; border-radius: 20px; }
+    .g-btn-text:hover { background: #f0f4f9; }
+    
+    .g-btn-primary { background: var(--gm-primary); color: white; border: none; padding: 10px 24px; border-radius: 20px; font-family: 'Google Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.2s; }
+    .g-btn-primary:hover { background: var(--gm-primary-hover); }
 
-    /* Email Cards */
-    .email-card { background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-    .email-card h4 { margin: 0 0 6px 0; font-size: 1.05rem; color: #1e293b; }
-    .email-meta { font-size: 0.82rem; color: #64748b; margin-bottom: 10px; }
-    .email-body { color: #334155; font-size: 0.95rem; white-space: pre-line; }
+    /* GMAIL APP HEADER */
+    .app-header { height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; background: var(--gm-bg); }
+    .header-left { display: flex; align-items: center; gap: 16px; width: 230px; }
+    .menu-icon { padding: 10px; border-radius: 50%; cursor: pointer; color: var(--gm-text-sub); }
+    .menu-icon:hover { background: var(--gm-hover); }
+    
+    .app-title { font-family: 'Google Sans', sans-serif; font-size: 22px; color: var(--gm-text-sub); display: flex; align-items: center; gap: 10px; font-weight: 500; }
 
-    /* Attachment Link Styling */
-    .attachment-box { margin-top: 10px; padding: 8px 12px; background: #f0f9ff; border: 1px dashed #0284c7; border-radius: 6px; display: inline-block; }
-    .attachment-box a { color: #0284c7; font-weight: bold; text-decoration: none; word-break: break-all; }
+    .search-container { flex: 1; max-width: 720px; position: relative; }
+    .search-bar { width: 100%; height: 48px; background: #eaf1fb; border: none; border-radius: 24px; padding: 0 20px 0 52px; font-size: 16px; color: var(--gm-text-main); outline: none; }
+    .search-bar:focus { background: var(--gm-surface); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+    .search-icon { position: absolute; left: 16px; top: 14px; color: var(--gm-text-sub); }
 
-    /* Modals & Popups */
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; padding: 15px; z-index: 100; }
-    .modal-box { background: white; width: 100%; max-width: 480px; padding: 20px; border-radius: 12px; }
+    .header-right { display: flex; align-items: center; gap: 12px; }
+    .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: #0b57d0; color: white; font-weight: bold; display: flex; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; }
 
-    /* Error Box */
-    .error-box { background: #fef2f2; border: 1px solid #fca5a5; padding: 12px; border-radius: 8px; color: #991b1b; margin-bottom: 15px; }
+    /* MAIN GMAIL LAYOUT */
+    .app-body { display: flex; flex: 1; height: calc(100vh - 64px); overflow: hidden; }
+
+    /* SIDEBAR */
+    .sidebar { width: 256px; padding: 8px 12px; display: flex; flex-direction: column; gap: 4px; background: var(--gm-bg); }
+    .btn-compose { display: flex; align-items: center; gap: 12px; background: var(--gm-primary-container); color: var(--gm-on-primary-container); padding: 16px 24px; border-radius: 16px; font-family: 'Google Sans', sans-serif; font-weight: 500; font-size: 14px; border: none; cursor: pointer; margin-bottom: 16px; width: fit-content; }
+    .btn-compose:hover { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
+
+    .nav-item { display: flex; align-items: center; gap: 18px; padding: 0 24px; height: 32px; border-radius: 16px; font-size: 14px; font-weight: 500; color: var(--gm-text-sub); cursor: pointer; }
+    .nav-item:hover { background: var(--gm-hover); }
+    .nav-item.active { background: var(--gm-active); color: var(--gm-on-primary-container); font-weight: 700; }
+
+    /* MAIL VIEW AREA */
+    .mail-view { flex: 1; background: var(--gm-surface); border-radius: 16px; margin: 0 16px 16px 0; display: flex; flex-direction: column; overflow: hidden; }
+    .mail-toolbar { height: 48px; border-bottom: 1px solid #e0e3e7; display: flex; align-items: center; padding: 0 16px; gap: 16px; color: var(--gm-text-sub); }
+    .mail-list { flex: 1; overflow-y: auto; }
+
+    /* GMAIL ROW STYLE */
+    .email-row { display: flex; align-items: center; height: 48px; padding: 0 16px; border-bottom: 1px solid #f2f2f2; cursor: pointer; font-size: 14px; }
+    .email-row:hover { box-shadow: inset 1px 0 0 #dadce0, inset -1px 0 0 #dadce0, 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15); z-index: 1; }
+    .email-row-sender { width: 200px; font-weight: 700; color: var(--gm-text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .email-row-content { flex: 1; display: flex; align-items: center; gap: 8px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; padding-right: 16px; }
+    .email-row-subject { font-weight: 500; color: var(--gm-text-main); }
+    .email-row-snippet { color: var(--gm-text-sub); }
+    .email-row-date { font-size: 12px; font-weight: 500; color: var(--gm-text-sub); width: 80px; text-align: right; }
+
+    /* SINGLE EMAIL DETAIL VIEW */
+    .email-detail-container { flex: 1; padding: 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
+    .detail-subject { font-family: 'Google Sans', sans-serif; font-size: 22px; color: var(--gm-text-main); font-weight: 400; display: flex; justify-content: space-between; align-items: center; }
+    .detail-sender-card { display: flex; align-items: center; gap: 16px; margin-top: 10px; }
+    .detail-avatar { width: 40px; height: 40px; border-radius: 50%; background: #0b57d0; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; }
+    .detail-sender-info { display: flex; flex-direction: column; }
+    .detail-sender-name { font-weight: bold; font-size: 14px; color: var(--gm-text-main); }
+    .detail-sender-email { font-size: 12px; color: var(--gm-text-sub); }
+    .detail-body { font-size: 14px; line-height: 1.6; color: var(--gm-text-main); margin-top: 10px; white-space: pre-wrap; }
+
+    /* FILE PREVIEW CARDS */
+    .preview-card { margin-top: 15px; border: 1px solid #e0e3e7; border-radius: 12px; overflow: hidden; max-width: 320px; background: #f8fafc; }
+    .preview-card img { width: 100%; max-height: 200px; object-fit: cover; display: block; }
+    .preview-card-info { padding: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 500; color: var(--gm-text-main); }
+
+    /* GMAIL FLOATING COMPOSE DIALOG */
+    .compose-modal { position: fixed; bottom: 0; right: 80px; width: 560px; height: 520px; background: var(--gm-surface); border-radius: 12px 12px 0 0; box-shadow: var(--gm-shadow); display: flex; flex-direction: column; z-index: 200; overflow: hidden; }
+    .compose-header { background: #f2f6fc; height: 40px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; font-family: 'Google Sans', sans-serif; font-size: 14px; font-weight: 500; color: var(--gm-text-main); }
+    .compose-body { flex: 1; padding: 8px 16px; display: flex; flex-direction: column; overflow-y: auto; }
+    .compose-input { width: 100%; border: none; border-bottom: 1px solid #e0e3e7; padding: 8px 0; font-size: 14px; outline: none; }
+    .compose-textarea { flex: 1; width: 100%; border: none; padding-top: 12px; font-size: 14px; outline: none; resize: none; min-height: 150px; }
+    .compose-footer { height: 52px; padding: 8px 16px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #f2f2f2; }
+    .btn-send { background: var(--gm-primary); color: white; border: none; padding: 0 24px; height: 36px; border-radius: 18px; font-family: 'Google Sans', sans-serif; font-weight: 500; font-size: 14px; cursor: pointer; }
 
     .hidden { display: none !important; }
 
-    /* Mobile Responsive Rules */
+    /* RESPONSIVE MOBILE STYLES */
     @media (max-width: 768px) {
-      .app-layout { flex-direction: column; }
-      .sidebar { width: 100%; height: auto; padding: 15px; }
-      .btn-danger { margin-top: 15px; }
+      .sidebar { width: 68px; padding: 8px; }
+      .nav-item span:not(.material-symbols-outlined) { display: none; }
+      .btn-compose { padding: 16px; border-radius: 16px; }
+      .btn-compose span:not(.material-symbols-outlined) { display: none; }
+      .compose-modal { right: 0; left: 0; width: 100%; height: 100vh; border-radius: 0; }
+      .mail-view { margin: 0; border-radius: 0; }
+      .email-row-sender { width: 120px; }
+      .g-auth-card { padding: 24px; border-radius: 16px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- 1. LOGIN & REGISTER SCREEN -->
-  <div id="auth-screen" style="max-width: 420px; margin: 50px auto; width: 90%; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
-    <h2>DHXN Webmail</h2>
-    <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 20px;">Access your <span class="domain-tag">@dhxnservice.com</span> account</p>
+  <!-- 1. AUTHENTICATION VIEW (CUSTOM DHXN LOGO) -->
+  <div id="auth-screen">
+    <div class="g-auth-card">
+      
+      <!-- Custom Geometric DHXN Envelope Logo -->
+      <svg class="dhxn-logo" viewBox="0 0 48 48" fill="none">
+        <rect width="48" height="48" rx="12" fill="#0B57D0"/>
+        <path d="M12 16L24 26L36 16" stroke="#C2E7FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect x="12" y="16" width="24" height="16" rx="3" stroke="white" stroke-width="3"/>
+      </svg>
+
+      <h1 class="g-title">Sign in</h1>
+      <p class="g-subtitle">to continue to DHXN Mail</p>
+
+      <div class="g-input-field">
+        <span class="g-label">Username</span>
+        <input type="text" id="auth-username" class="g-input" placeholder="e.g. dhxn" autocomplete="off">
+      </div>
+      <p class="domain-badge-text">Account Domain: @dhxnservice.com</p>
+
+      <div class="g-input-field">
+        <span class="g-label">Password</span>
+        <input type="password" id="auth-password" class="g-input" placeholder="••••••••">
+      </div>
+
+      <div class="g-actions">
+        <button class="g-btn-text" onclick="handleAuth('signup')">Create account</button>
+        <button class="g-btn-primary" onclick="handleAuth('login')">Next</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 2. MAIN MAIL APPLICATION -->
+  <div id="app-screen" class="hidden" style="height: 100vh; display: flex; flex-direction: column;">
     
-    <label style="font-size: 0.85rem; font-weight: bold; color: #475569;">Username</label>
-    <div style="display: flex; align-items: center; gap: 4px;">
-      <input type="text" id="auth-username" placeholder="e.g. dhxn">
-      <span style="font-weight: bold; color: #64748b; font-size: 0.9rem;">@dhxnservice.com</span>
-    </div>
-
-    <label style="font-size: 0.85rem; font-weight: bold; color: #475569;">Password</label>
-    <input type="password" id="auth-password" placeholder="••••••••">
-
-    <button class="btn" onclick="handleAuth('login')">Sign In</button>
-    <button class="btn btn-secondary" onclick="handleAuth('signup')">Create Account</button>
-  </div>
-
-  <!-- 2. MAIN APP PORTAL -->
-  <div id="app-screen" class="app-layout hidden">
-    <!-- Sidebar -->
-    <div class="sidebar">
-      <h2>DHXN Mail</h2>
-      <p id="user-display" style="font-size: 0.85rem; color: #94a3b8; word-break: break-all; margin-bottom: 20px;"></p>
-      
-      <button class="btn" onclick="toggleComposeModal(true)">+ Compose Email</button>
-      <button class="btn btn-danger" onclick="logout()">Sign Out</button>
-    </div>
-
-    <!-- Main Content Area -->
-    <div class="main-view">
-      <div class="tabs">
-        <button id="tab-inbox" class="tab-btn active" onclick="switchTab('inbox')">Inbox</button>
-        <button id="tab-sent" class="tab-btn" onclick="switchTab('sent')">Sent Messages</button>
+    <!-- Top Bar Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <span class="material-symbols-outlined menu-icon">menu</span>
+        <div class="app-title">
+          <svg width="28" height="28" viewBox="0 0 48 48" fill="none">
+            <rect width="48" height="48" rx="10" fill="#0B57D0"/>
+            <path d="M12 16L24 26L36 16" stroke="#C2E7FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="12" y="16" width="24" height="16" rx="3" stroke="white" stroke-width="3"/>
+          </svg>
+          <span>DHXN Mail</span>
+        </div>
       </div>
 
-      <div id="email-list">Loading messages...</div>
+      <div class="search-container">
+        <span class="material-symbols-outlined search-icon">search</span>
+        <input type="text" class="search-bar" placeholder="Search mail">
+      </div>
+
+      <div class="header-right">
+        <span class="material-symbols-outlined menu-icon">help</span>
+        <span class="material-symbols-outlined menu-icon">settings</span>
+        <div class="user-avatar" id="avatar-badge" onclick="logout()" title="Click to Sign Out">D</div>
+      </div>
+    </header>
+
+    <!-- App Body -->
+    <div class="app-body">
+      
+      <!-- Left Sidebar Navigation -->
+      <aside class="sidebar">
+        <button class="btn-compose" onclick="toggleCompose(true)">
+          <span class="material-symbols-outlined">edit</span>
+          <span>Compose</span>
+        </button>
+
+        <div id="nav-inbox" class="nav-item active" onclick="switchTab('inbox')">
+          <span class="material-symbols-outlined">inbox</span>
+          <span>Inbox</span>
+        </div>
+
+        <div id="nav-sent" class="nav-item" onclick="switchTab('sent')">
+          <span class="material-symbols-outlined">send</span>
+          <span>Sent</span>
+        </div>
+      </aside>
+
+      <!-- Central Mail View -->
+      <main class="mail-view">
+        
+        <!-- List Toolbar -->
+        <div class="mail-toolbar" id="list-toolbar">
+          <span class="material-symbols-outlined" style="cursor: pointer;">check_box_outline_blank</span>
+          <span class="material-symbols-outlined" style="cursor: pointer;" onclick="loadEmails()">refresh</span>
+          <span class="material-symbols-outlined" style="cursor: pointer;">more_vert</span>
+        </div>
+
+        <!-- Detail Toolbar (Hidden by default) -->
+        <div class="mail-toolbar hidden" id="detail-toolbar">
+          <span class="material-symbols-outlined" style="cursor: pointer;" onclick="closeEmailDetail()">arrow_back</span>
+          <span class="material-symbols-outlined" style="cursor: pointer;">archive</span>
+          <span class="material-symbols-outlined" style="cursor: pointer;">delete</span>
+          <span class="material-symbols-outlined" style="cursor: pointer;">mark_as_unread</span>
+        </div>
+
+        <!-- Email List Container -->
+        <div class="mail-list" id="mail-list-container"></div>
+
+        <!-- Email Single Detail View (Hidden by default) -->
+        <div class="email-detail-container hidden" id="email-detail-view"></div>
+
+      </main>
+
     </div>
   </div>
 
-  <!-- 3. COMPOSE MESSAGE MODAL WITH FILE ATTACHMENT -->
-  <div id="compose-modal" class="modal-overlay hidden">
-    <div class="modal-box">
-      <h3 style="margin-top: 0;">New Message</h3>
-      
-      <input type="text" id="msg-to" placeholder="To: username or user@dhxnservice.com">
-      <input type="text" id="msg-subject" placeholder="Subject">
-      <textarea id="msg-body" rows="5" placeholder="Write your message here..."></textarea>
-      
-      <!-- File Attachment Input -->
-      <label style="font-size: 0.85rem; font-weight: bold; color: #475569;">Attach File (Optional):</label>
-      <input type="file" id="msg-file" style="margin-top: 4px; margin-bottom: 16px;">
+  <!-- 3. FLOATING COMPOSE DIALOG -->
+  <div id="compose-dialog" class="compose-modal hidden">
+    <div class="compose-header">
+      <span>New Message</span>
+      <span class="material-symbols-outlined" style="cursor: pointer;" onclick="toggleCompose(false)">close</span>
+    </div>
 
-      <div style="display: flex; gap: 10px;">
-        <button class="btn btn-secondary" onclick="toggleComposeModal(false)">Cancel</button>
-        <button class="btn" id="send-btn" onclick="sendEmail()">Send Email</button>
+    <div class="compose-body">
+      <input type="text" id="msg-to" class="compose-input" placeholder="Recipients">
+      <input type="text" id="msg-subject" class="compose-input" placeholder="Subject">
+      <textarea id="msg-body" class="compose-textarea" placeholder=""></textarea>
+      
+      <!-- Dynamic File Preview Container -->
+      <div id="compose-file-preview"></div>
+    </div>
+
+    <div class="compose-footer">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <button class="btn-send" id="send-btn" onclick="sendEmail()">Send</button>
+
+        <!-- Attachment Paperclip Icon -->
+        <label for="msg-file" style="cursor: pointer; display: flex; align-items: center;">
+          <span class="material-symbols-outlined" style="color: var(--gm-text-sub);">attach_file</span>
+        </label>
+        <input type="file" id="msg-file" class="hidden" onchange="previewSelectedFile(event)">
       </div>
+
+      <span class="material-symbols-outlined" style="color: var(--gm-text-sub); cursor: pointer;" onclick="toggleCompose(false)">delete</span>
     </div>
   </div>
 
@@ -133,6 +298,7 @@
 
     let currentUser = null;
     let currentTab = 'inbox';
+    let loadedEmailsMap = {}; 
 
     // AUTHENTICATION LOGIC
     async function handleAuth(type) {
@@ -159,7 +325,8 @@
       const { data: { session } } = await db.auth.getSession();
       if (session) {
         currentUser = session.user;
-        document.getElementById('user-display').innerText = currentUser.email;
+        const initial = currentUser.email.charAt(0).toUpperCase();
+        document.getElementById('avatar-badge').innerText = initial;
         document.getElementById('auth-screen').classList.add('hidden');
         document.getElementById('app-screen').classList.remove('hidden');
         loadEmails();
@@ -174,15 +341,15 @@
       checkSession();
     }
 
-    // FETCH MESSAGES FROM DATABASE
+    // FETCH EMAILS AND DISPLAY IN INBOX LIST
     async function loadEmails() {
-      const listContainer = document.getElementById('email-list');
-      listContainer.innerHTML = "<p style='color:#64748b;'>Fetching messages...</p>";
+      closeEmailDetail();
+      const listContainer = document.getElementById('mail-list-container');
+      listContainer.innerHTML = "<p style='padding:20px; color:var(--gm-text-sub);'>Loading...</p>";
 
       if (!currentUser) return;
 
       let query = db.from('emails').select('*');
-
       if (currentTab === 'inbox') query = query.eq('recipient', currentUser.email);
       else query = query.eq('sender', currentUser.email);
 
@@ -191,79 +358,159 @@
       const { data: emails, error } = await query;
 
       if (error) {
-        listContainer.innerHTML = `<div class="error-box"><strong>Error:</strong> <code>${error.message}</code></div>`;
+        listContainer.innerHTML = `<p style='padding:20px; color:#d93025;'>Error: ${error.message}</p>`;
         return;
       }
 
       if (!emails || emails.length === 0) {
-        listContainer.innerHTML = `<p style='text-align:center; color:#64748b; margin-top:40px;'>No messages in your ${currentTab}.</p>`;
+        listContainer.innerHTML = `<p style='padding:40px; text-align:center; color:var(--gm-text-sub);'>Your ${currentTab} is empty.</p>`;
         return;
       }
 
+      loadedEmailsMap = {};
+      emails.forEach(e => loadedEmailsMap[e.id] = e);
+
       listContainer.innerHTML = emails.map(e => `
-        <div class="email-card">
-          <h4>${e.subject || '(No Subject)'}</h4>
-          <div class="email-meta">
-            ${currentTab === 'inbox' ? 'From: <strong>' + e.sender + '</strong>' : 'To: <strong>' + e.recipient + '</strong>'}
-            | ${new Date(e.created_at || Date.now()).toLocaleDateString()}
+        <div class="email-row" onclick="openEmailDetail('${e.id}')">
+          <span class="material-symbols-outlined" style="margin-right: 16px; color: #c4c7c5;">check_box_outline_blank</span>
+          <span class="material-symbols-outlined" style="margin-right: 16px; color: #c4c7c5;">star</span>
+          <div class="email-row-sender">${currentTab === 'inbox' ? e.sender.split('@')[0] : e.recipient.split('@')[0]}</div>
+          <div class="email-row-content">
+            <span class="email-row-subject">${e.subject || '(no subject)'}</span>
+            <span class="email-row-snippet">- ${e.body.substring(0, 60)}...</span>
           </div>
-          <div class="email-body">${e.body}</div>
+          <div class="email-row-date">${new Date(e.created_at || Date.now()).toLocaleDateString([], {month:'short', day:'numeric'})}</div>
         </div>
       `).join('');
     }
 
+    // OPEN SINGLE EMAIL (READ VIEW)
+    function openEmailDetail(emailId) {
+      const email = loadedEmailsMap[emailId];
+      if (!email) return;
+
+      document.getElementById('list-toolbar').classList.add('hidden');
+      document.getElementById('mail-list-container').classList.add('hidden');
+      document.getElementById('detail-toolbar').classList.remove('hidden');
+      
+      const detailView = document.getElementById('email-detail-view');
+      detailView.classList.remove('hidden');
+
+      const senderInitial = email.sender.charAt(0).toUpperCase();
+
+      let attachmentHTML = '';
+      const attachmentMatch = email.body.match(/📎 Attachment: (.*?)\n(https?:\/\/[^\s]+)/);
+      let cleanBody = email.body;
+
+      if (attachmentMatch) {
+        const fileName = attachmentMatch[1];
+        const fileUrl = attachmentMatch[2];
+        cleanBody = email.body.replace(attachmentMatch[0], '');
+
+        const isImage = fileUrl.match(/\.(jpeg|jpg|gif|png|webp)/i);
+
+        attachmentHTML = `
+          <div class="preview-card">
+            ${isImage ? `<img src="${fileUrl}" alt="Attached preview">` : ''}
+            <div class="preview-card-info">
+              <span>${fileName}</span>
+              <a href="${fileUrl}" target="_blank" style="color: var(--gm-primary); text-decoration: none; font-weight: bold;">Download</a>
+            </div>
+          </div>
+        `;
+      }
+
+      detailView.innerHTML = `
+        <div class="detail-subject">
+          <span>${email.subject || '(no subject)'}</span>
+        </div>
+
+        <div class="detail-sender-card">
+          <div class="detail-avatar">${senderInitial}</div>
+          <div class="detail-sender-info">
+            <span class="detail-sender-name">${email.sender.split('@')[0]}</span>
+            <span class="detail-sender-email">From: ${email.sender} | To: ${email.recipient}</span>
+          </div>
+        </div>
+
+        <div class="detail-body">${cleanBody}</div>
+        ${attachmentHTML}
+      `;
+    }
+
+    function closeEmailDetail() {
+      document.getElementById('detail-toolbar').classList.add('hidden');
+      document.getElementById('email-detail-view').classList.add('hidden');
+      document.getElementById('list-toolbar').classList.remove('hidden');
+      document.getElementById('mail-list-container').classList.remove('hidden');
+    }
+
     function switchTab(tab) {
       currentTab = tab;
-      document.getElementById('tab-inbox').classList.toggle('active', tab === 'inbox');
-      document.getElementById('tab-sent').classList.toggle('active', tab === 'sent');
+      document.getElementById('nav-inbox').classList.toggle('active', tab === 'inbox');
+      document.getElementById('nav-sent').classList.toggle('active', tab === 'sent');
       loadEmails();
     }
 
-    function toggleComposeModal(show) {
-      document.getElementById('compose-modal').classList.toggle('hidden', !show);
+    function toggleCompose(show) {
+      document.getElementById('compose-dialog').classList.toggle('hidden', !show);
+      if (!show) {
+        document.getElementById('compose-file-preview').innerHTML = '';
+        document.getElementById('msg-file').value = '';
+      }
     }
 
-    // SEND EMAIL WITH FILE ATTACHMENT UPLOAD
+    function previewSelectedFile(event) {
+      const file = event.target.files[0];
+      const previewContainer = document.getElementById('compose-file-preview');
+
+      if (!file) {
+        previewContainer.innerHTML = '';
+        return;
+      }
+
+      const isImage = file.type.startsWith('image/');
+      const fileUrl = URL.createObjectURL(file);
+
+      previewContainer.innerHTML = `
+        <div class="preview-card">
+          ${isImage ? `<img src="${fileUrl}">` : ''}
+          <div class="preview-card-info">
+            <span>${file.name}</span>
+            <span style="font-size: 11px; color: var(--gm-text-sub);">${(file.size / 1024).toFixed(1)} KB</span>
+          </div>
+        </div>
+      `;
+    }
+
+    // SEND MESSAGE WITH ATTACHMENTS
     async function sendEmail() {
       let recipientInput = document.getElementById('msg-to').value.trim().toLowerCase();
       const subject = document.getElementById('msg-subject').value;
       let body = document.getElementById('msg-body').value;
       const fileInput = document.getElementById('msg-file');
 
-      if (!recipientInput || !body) return alert("Recipient and message content are required!");
+      if (!recipientInput || !body) return alert("Recipient and body required!");
 
       let fullRecipient = recipientInput.includes('@') ? recipientInput : `${recipientInput}@dhxnservice.com`;
       const sendBtn = document.getElementById('send-btn');
 
       try {
-        sendBtn.innerText = "Uploading & Sending...";
+        sendBtn.innerText = "Sending...";
         sendBtn.disabled = true;
 
-        // Check if user attached a file
         if (fileInput.files.length > 0) {
           const file = fileInput.files[0];
           const fileExt = file.name.split('.').pop();
-          const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+          const fileName = `${Date.now()}.${fileExt}`;
 
-          // Upload file to Supabase Storage Bucket ('attachments')
-          const { data: uploadData, error: uploadError } = await db
-            .storage
-            .from('attachments')
-            .upload(fileName, file);
-
+          const { error: uploadError } = await db.storage.from('attachments').upload(fileName, file);
           if (uploadError) throw new Error("File upload failed: " + uploadError.message);
 
-          // Get public URL of the uploaded file
-          const { data: { publicUrl } } = db
-            .storage
-            .from('attachments')
-            .getPublicUrl(fileName);
-
-          // Append clickable attachment link to the body
+          const { data: { publicUrl } } = db.storage.from('attachments').getPublicUrl(fileName);
           body += `\n\n📎 Attachment: ${file.name}\n${publicUrl}`;
         }
 
-        // Insert email record into Supabase Database
         const { error: dbError } = await db.from('emails').insert([{
           sender: currentUser.email,
           recipient: fullRecipient,
@@ -273,18 +520,19 @@
 
         if (dbError) throw dbError;
 
-        alert("Message delivered!");
+        alert("Message sent!");
         document.getElementById('msg-to').value = '';
         document.getElementById('msg-subject').value = '';
         document.getElementById('msg-body').value = '';
+        document.getElementById('compose-file-preview').innerHTML = '';
         fileInput.value = '';
-        toggleComposeModal(false);
+        toggleCompose(false);
         switchTab('sent');
 
       } catch (err) {
-        alert("Error sending email: " + err.message);
+        alert("Error: " + err.message);
       } finally {
-        sendBtn.innerText = "Send Email";
+        sendBtn.innerText = "Send";
         sendBtn.disabled = false;
       }
     }
