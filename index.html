@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>DHXN Mail</title>
   
   <!-- Google Fonts & Material Symbols -->
@@ -24,19 +24,19 @@
       --gm-on-primary-container: #001d35;
       --gm-text-main: #1f1f1f;
       --gm-text-sub: #444746;
-      --gm-border: #747775;
+      --gm-border: #e0e3e7;
       --gm-hover: #eaedf1;
       --gm-active: #d3e3fd;
       --gm-shadow: 0 1px 3px 0 rgba(60,64,67,0.3), 0 4px 8px 3px rgba(60,64,67,0.15);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Roboto', sans-serif; }
-    body { background-color: var(--gm-bg); color: var(--gm-text-main); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Roboto', sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background-color: var(--gm-bg); color: var(--gm-text-main); height: 100vh; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
 
     .material-symbols-outlined { font-family: 'Material Symbols Outlined'; font-weight: normal; font-style: normal; font-size: 20px; line-height: 1; display: inline-block; white-space: nowrap; user-select: none; }
 
     /* AUTHENTICATION SCREEN */
-    #auth-screen { display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f4f9; padding: 12px; }
+    #auth-screen { display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f4f9; padding: 16px; }
     .g-auth-card { background: var(--gm-surface); width: 100%; max-width: 448px; padding: 40px; border-radius: 28px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); display: flex; flex-direction: column; }
     
     .dhxn-logo { width: 52px; height: 52px; margin-bottom: 16px; }
@@ -44,7 +44,7 @@
     .g-subtitle { font-size: 15px; color: var(--gm-text-sub); margin-bottom: 32px; }
 
     .g-input-field { position: relative; margin-bottom: 20px; width: 100%; }
-    .g-input { width: 100%; height: 56px; padding: 16px; border: 1px solid var(--gm-border); border-radius: 8px; font-size: 16px; outline: none; background: transparent; color: var(--gm-text-main); transition: border-color 0.2s; }
+    .g-input { width: 100%; height: 56px; padding: 16px; border: 1px solid #747775; border-radius: 8px; font-size: 16px; outline: none; background: transparent; color: var(--gm-text-main); transition: border-color 0.2s; }
     .g-input:focus { border-color: var(--gm-primary); border-width: 2px; }
     
     .g-label { position: absolute; left: 12px; top: -10px; background: var(--gm-surface); padding: 0 4px; font-size: 12px; color: var(--gm-primary); font-weight: 500; }
@@ -57,7 +57,7 @@
     .g-btn-primary { background: var(--gm-primary); color: white; border: none; padding: 10px 24px; border-radius: 20px; font-family: 'Google Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.2s; }
     .g-btn-primary:hover { background: var(--gm-primary-hover); }
 
-    /* GMAIL APP HEADER */
+    /* HEADER */
     .app-header { height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; background: var(--gm-bg); }
     .header-left { display: flex; align-items: center; gap: 16px; width: 230px; }
     .menu-icon { padding: 10px; border-radius: 50%; cursor: pointer; color: var(--gm-text-sub); }
@@ -73,15 +73,15 @@
     .header-right { display: flex; align-items: center; gap: 12px; }
     .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: #0b57d0; color: white; font-weight: bold; display: flex; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; }
 
-    /* MAIN GMAIL LAYOUT */
-    .app-body { display: flex; flex: 1; height: calc(100vh - 64px); overflow: hidden; }
+    /* MAIN DESKTOP LAYOUT */
+    .app-body { display: flex; flex: 1; height: calc(100vh - 64px); overflow: hidden; position: relative; }
 
     /* SIDEBAR */
-    .sidebar { width: 256px; padding: 8px 12px; display: flex; flex-direction: column; gap: 4px; background: var(--gm-bg); }
+    .sidebar { width: 256px; padding: 8px 12px; display: flex; flex-direction: column; gap: 4px; background: var(--gm-bg); transition: transform 0.25s ease-in-out; }
     .btn-compose { display: flex; align-items: center; gap: 12px; background: var(--gm-primary-container); color: var(--gm-on-primary-container); padding: 16px 24px; border-radius: 16px; font-family: 'Google Sans', sans-serif; font-weight: 500; font-size: 14px; border: none; cursor: pointer; margin-bottom: 16px; width: fit-content; }
     .btn-compose:hover { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
 
-    .nav-item { display: flex; align-items: center; gap: 18px; padding: 0 24px; height: 32px; border-radius: 16px; font-size: 14px; font-weight: 500; color: var(--gm-text-sub); cursor: pointer; }
+    .nav-item { display: flex; align-items: center; gap: 18px; padding: 0 24px; height: 40px; border-radius: 20px; font-size: 14px; font-weight: 500; color: var(--gm-text-sub); cursor: pointer; }
     .nav-item:hover { background: var(--gm-hover); }
     .nav-item.active { background: var(--gm-active); color: var(--gm-on-primary-container); font-weight: 700; }
 
@@ -90,8 +90,8 @@
     .mail-toolbar { height: 48px; border-bottom: 1px solid #e0e3e7; display: flex; align-items: center; padding: 0 16px; gap: 16px; color: var(--gm-text-sub); }
     .mail-list { flex: 1; overflow-y: auto; }
 
-    /* GMAIL ROW STYLE */
-    .email-row { display: flex; align-items: center; height: 48px; padding: 0 16px; border-bottom: 1px solid #f2f2f2; cursor: pointer; font-size: 14px; }
+    /* EMAIL ROW */
+    .email-row { display: flex; align-items: center; height: 52px; padding: 0 16px; border-bottom: 1px solid #f2f2f2; cursor: pointer; font-size: 14px; }
     .email-row:hover { box-shadow: inset 1px 0 0 #dadce0, inset -1px 0 0 #dadce0, 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15); z-index: 1; }
     .email-row.selected { background: #c2e7ff; }
     
@@ -112,12 +112,12 @@
     .detail-sender-email { font-size: 12px; color: var(--gm-text-sub); }
     .detail-body { font-size: 14px; line-height: 1.6; color: var(--gm-text-main); margin-top: 10px; white-space: pre-wrap; }
 
-    /* FILE PREVIEW CARDS */
+    /* PREVIEW CARDS */
     .preview-card { margin-top: 15px; border: 1px solid #e0e3e7; border-radius: 12px; overflow: hidden; max-width: 320px; background: #f8fafc; }
     .preview-card img { width: 100%; max-height: 200px; object-fit: cover; display: block; }
     .preview-card-info { padding: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 500; color: var(--gm-text-main); }
 
-    /* GMAIL FLOATING COMPOSE DIALOG */
+    /* COMPOSE MODAL (DESKTOP) */
     .compose-modal { position: fixed; bottom: 0; right: 80px; width: 560px; height: 520px; background: var(--gm-surface); border-radius: 12px 12px 0 0; box-shadow: var(--gm-shadow); display: flex; flex-direction: column; z-index: 200; overflow: hidden; }
     .compose-header { background: #f2f6fc; height: 40px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; font-family: 'Google Sans', sans-serif; font-size: 14px; font-weight: 500; color: var(--gm-text-main); }
     .compose-body { flex: 1; padding: 8px 16px; display: flex; flex-direction: column; overflow-y: auto; }
@@ -126,18 +126,55 @@
     .compose-footer { height: 52px; padding: 8px 16px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #f2f2f2; }
     .btn-send { background: var(--gm-primary); color: white; border: none; padding: 0 24px; height: 36px; border-radius: 18px; font-family: 'Google Sans', sans-serif; font-weight: 500; font-size: 14px; cursor: pointer; }
 
+    /* MOBILE NAVIGATION BOTTOM BAR */
+    .mobile-bottom-bar { display: none; }
+
     .hidden { display: none !important; }
 
-    /* RESPONSIVE MOBILE STYLES */
+    /* ------------------------------------------------------------- */
+    /* 📱 ANDROID / MOBILE RESPONSIVE STYLES                         */
+    /* ------------------------------------------------------------- */
     @media (max-width: 768px) {
-      .sidebar { width: 68px; padding: 8px; }
-      .nav-item span:not(.material-symbols-outlined) { display: none; }
-      .btn-compose { padding: 16px; border-radius: 16px; }
+      .app-header { padding: 0 12px; }
+      .header-left { width: auto; }
+      .app-title span { display: none; } /* Hide text title on small screens */
+
+      .search-container { margin: 0 8px; }
+      .search-bar { height: 40px; font-size: 14px; padding-left: 44px; }
+      .search-icon { top: 10px; left: 12px; }
+
+      /* Mobile Drawer Overlay Sidebar */
+      .sidebar { position: absolute; top: 0; left: 0; bottom: 0; z-index: 300; width: 280px; box-shadow: var(--gm-shadow); transform: translateX(-100%); padding-top: 16px; }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.4); z-index: 290; display: none; }
+      .sidebar-overlay.open { display: block; }
+
+      .mail-view { margin: 0; border-radius: 0; height: calc(100vh - 120px); height: calc(100dvh - 120px); }
+
+      /* Android Floating Action Button (FAB) for Compose */
+      .btn-compose { position: fixed; right: 20px; bottom: 80px; z-index: 100; padding: 16px; border-radius: 16px; box-shadow: var(--gm-shadow); margin: 0; }
       .btn-compose span:not(.material-symbols-outlined) { display: none; }
-      .compose-modal { right: 0; left: 0; width: 100%; height: 100vh; border-radius: 0; }
-      .mail-view { margin: 0; border-radius: 0; }
-      .email-row-sender { width: 120px; }
-      .g-auth-card { padding: 24px; border-radius: 16px; }
+
+      /* Compact Mobile Email Rows */
+      .email-row { height: 72px; padding: 12px 16px; position: relative; }
+      .email-checkbox { display: none; } /* Hide checkboxes on mobile view */
+      .email-row-sender { width: 100%; font-size: 15px; margin-bottom: 2px; }
+      .email-row-content { display: block; padding-right: 0; }
+      .email-row-subject { font-size: 13px; display: block; overflow: hidden; text-overflow: ellipsis; }
+      .email-row-snippet { font-size: 13px; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .email-row-date { position: absolute; right: 16px; top: 12px; font-size: 11px; }
+
+      /* Fullscreen Mobile Compose Window */
+      .compose-modal { right: 0; left: 0; top: 0; bottom: 0; width: 100%; height: 100vh; height: 100dvh; border-radius: 0; z-index: 400; }
+      .compose-header { height: 56px; padding: 0 16px; font-size: 16px; }
+
+      /* Android Bottom Navigation Bar */
+      .mobile-bottom-bar { display: flex; height: 56px; background: #eaf1fb; border-top: 1px solid #e0e3e7; position: fixed; bottom: 0; left: 0; right: 0; z-index: 150; justify-content: space-around; align-items: center; }
+      .mobile-nav-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--gm-text-sub); font-size: 10px; font-weight: 500; gap: 2px; flex: 1; height: 100%; cursor: pointer; }
+      .mobile-nav-btn.active { color: var(--gm-primary); font-weight: 700; }
+      .mobile-nav-btn .material-symbols-outlined { font-size: 22px; }
+
+      .g-auth-card { padding: 28px 20px; border-radius: 20px; }
     }
   </style>
 </head>
@@ -174,12 +211,12 @@
   </div>
 
   <!-- 2. MAIN MAIL APPLICATION -->
-  <div id="app-screen" class="hidden" style="height: 100vh; display: flex; flex-direction: column;">
+  <div id="app-screen" class="hidden" style="height: 100vh; height: 100dvh; display: flex; flex-direction: column;">
     
     <!-- Top Bar Header -->
     <header class="app-header">
       <div class="header-left">
-        <span class="material-symbols-outlined menu-icon">menu</span>
+        <span class="material-symbols-outlined menu-icon" onclick="toggleMobileSidebar()">menu</span>
         <div class="app-title">
           <svg width="28" height="28" viewBox="0 0 48 48" fill="none">
             <rect width="48" height="48" rx="10" fill="#0B57D0"/>
@@ -192,12 +229,10 @@
 
       <div class="search-container">
         <span class="material-symbols-outlined search-icon">search</span>
-        <input type="text" class="search-bar" placeholder="Search mail">
+        <input type="text" class="search-bar" placeholder="Search in mail">
       </div>
 
       <div class="header-right">
-        <span class="material-symbols-outlined menu-icon">help</span>
-        <span class="material-symbols-outlined menu-icon">settings</span>
         <div class="user-avatar" id="avatar-badge" onclick="logout()" title="Click to Sign Out">D</div>
       </div>
     </header>
@@ -205,8 +240,10 @@
     <!-- App Body -->
     <div class="app-body">
       
+      <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleMobileSidebar()"></div>
+
       <!-- Left Sidebar Navigation -->
-      <aside class="sidebar">
+      <aside class="sidebar" id="sidebar">
         <button class="btn-compose" onclick="toggleCompose(true)">
           <span class="material-symbols-outlined">edit</span>
           <span>Compose</span>
@@ -241,7 +278,6 @@
           <span class="material-symbols-outlined" id="select-all-checkbox" style="cursor: pointer;" onclick="toggleSelectAll()">check_box_outline_blank</span>
           <span class="material-symbols-outlined" style="cursor: pointer;" onclick="loadEmails()">refresh</span>
           
-          <!-- Batch Action Buttons (Hidden when nothing selected) -->
           <div id="batch-actions" class="hidden" style="display: flex; gap: 16px; align-items: center;">
             <span class="material-symbols-outlined" style="cursor: pointer;" title="Archive" onclick="batchArchive()">archive</span>
             <span class="material-symbols-outlined" style="cursor: pointer;" title="Delete" onclick="batchDelete()">delete</span>
@@ -264,9 +300,30 @@
       </main>
 
     </div>
+
+    <!-- Android Bottom Navigation Bar -->
+    <nav class="mobile-bottom-bar">
+      <div class="mobile-nav-btn active" id="m-nav-inbox" onclick="switchTab('inbox')">
+        <span class="material-symbols-outlined">inbox</span>
+        <span>Inbox</span>
+      </div>
+      <div class="mobile-nav-btn" id="m-nav-sent" onclick="switchTab('sent')">
+        <span class="material-symbols-outlined">send</span>
+        <span>Sent</span>
+      </div>
+      <div class="mobile-nav-btn" id="m-nav-archive" onclick="switchTab('archive')">
+        <span class="material-symbols-outlined">archive</span>
+        <span>Archive</span>
+      </div>
+      <div class="mobile-nav-btn" id="m-nav-trash" onclick="switchTab('trash')">
+        <span class="material-symbols-outlined">delete</span>
+        <span>Trash</span>
+      </div>
+    </nav>
+
   </div>
 
-  <!-- 3. FLOATING COMPOSE DIALOG -->
+  <!-- 3. FLOATING / FULLSCREEN COMPOSE DIALOG -->
   <div id="compose-dialog" class="compose-modal hidden">
     <div class="compose-header">
       <span>New Message</span>
@@ -274,9 +331,9 @@
     </div>
 
     <div class="compose-body">
-      <input type="text" id="msg-to" class="compose-input" placeholder="Recipients">
+      <input type="text" id="msg-to" class="compose-input" placeholder="To">
       <input type="text" id="msg-subject" class="compose-input" placeholder="Subject">
-      <textarea id="msg-body" class="compose-textarea" placeholder=""></textarea>
+      <textarea id="msg-body" class="compose-textarea" placeholder="Compose email..."></textarea>
       
       <div id="compose-file-preview"></div>
     </div>
@@ -350,6 +407,13 @@
       checkSession();
     }
 
+    function toggleMobileSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('open');
+    }
+
     // FETCH EMAILS AND DISPLAY IN INBOX LIST
     async function loadEmails() {
       closeEmailDetail();
@@ -363,13 +427,12 @@
 
       let query = db.from('emails').select('*');
 
-      // Filter based on tab and status
       if (currentTab === 'inbox') {
-        query = query.eq('recipient', currentUser.email).or('is_archived.is.null,is_archived.eq.false').or('is_deleted.is.null,is_deleted.eq.false');
+        query = query.eq('recipient', currentUser.email);
       } else if (currentTab === 'sent') {
-        query = query.eq('sender', currentUser.email).or('is_deleted.is.null,is_deleted.eq.false');
+        query = query.eq('sender', currentUser.email);
       } else if (currentTab === 'archive') {
-        query = query.eq('recipient', currentUser.email).eq('is_archived', true).or('is_deleted.is.null,is_deleted.eq.false');
+        query = query.eq('recipient', currentUser.email).eq('is_archived', true);
       } else if (currentTab === 'trash') {
         query = query.or(`sender.eq.${currentUser.email},recipient.eq.${currentUser.email}`).eq('is_deleted', true);
       }
@@ -383,18 +446,22 @@
         return;
       }
 
-      if (!emails || emails.length === 0) {
+      let filteredEmails = emails || [];
+      if (currentTab === 'inbox' || currentTab === 'sent') {
+        filteredEmails = filteredEmails.filter(e => !e.is_deleted && !e.is_archived);
+      }
+
+      if (filteredEmails.length === 0) {
         listContainer.innerHTML = `<p style='padding:40px; text-align:center; color:var(--gm-text-sub);'>Your ${currentTab} is empty.</p>`;
         return;
       }
 
       loadedEmailsMap = {};
-      emails.forEach(e => loadedEmailsMap[e.id] = e);
+      filteredEmails.forEach(e => loadedEmailsMap[e.id] = e);
 
-      listContainer.innerHTML = emails.map(e => `
+      listContainer.innerHTML = filteredEmails.map(e => `
         <div class="email-row" id="row-${e.id}">
           <span class="material-symbols-outlined email-checkbox" id="chk-${e.id}" onclick="event.stopPropagation(); toggleSelectRow('${e.id}')">check_box_outline_blank</span>
-          <span class="material-symbols-outlined" style="margin-right: 16px; color: #c4c7c5;">star</span>
           <div class="email-row-sender" onclick="openEmailDetail('${e.id}')">${currentTab === 'inbox' ? e.sender.split('@')[0] : e.recipient.split('@')[0]}</div>
           <div class="email-row-content" onclick="openEmailDetail('${e.id}')">
             <span class="email-row-subject">${e.subject || '(no subject)'}</span>
@@ -412,12 +479,12 @@
 
       if (selectedEmailIds.has(emailId)) {
         selectedEmailIds.delete(emailId);
-        chk.innerText = 'check_box_outline_blank';
-        row.classList.remove('selected');
+        if (chk) chk.innerText = 'check_box_outline_blank';
+        if (row) row.classList.remove('selected');
       } else {
         selectedEmailIds.add(emailId);
-        chk.innerText = 'check_box';
-        row.classList.add('selected');
+        if (chk) chk.innerText = 'check_box';
+        if (row) row.classList.add('selected');
       }
       updateBatchActionsUI();
     }
@@ -454,19 +521,15 @@
       else batchBox.classList.add('hidden');
     }
 
-    // BATCH & SINGLE DELETE / ARCHIVE FUNCTIONS
+    // DELETE & ARCHIVE ACTIONS
     async function batchDelete() {
       if (selectedEmailIds.size === 0) return;
-
       const ids = Array.from(selectedEmailIds);
       if (currentTab === 'trash') {
-        // Permanently Delete from DB if already in trash
         await db.from('emails').delete().in('id', ids);
       } else {
-        // Move to Trash
         await db.from('emails').update({ is_deleted: true }).in('id', ids);
       }
-
       loadEmails();
     }
 
@@ -558,8 +621,21 @@
 
     function switchTab(tab) {
       currentTab = tab;
-      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-      document.getElementById(`nav-${tab}`).classList.add('active');
+      
+      // Close mobile sidebar drawer if open
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('sidebar-overlay').classList.remove('open');
+
+      // Update Desktop Nav Active State
+      document.querySelectorAll('.sidebar .nav-item').forEach(el => el.classList.remove('active'));
+      const activeDesktopTab = document.getElementById(`nav-${tab}`);
+      if (activeDesktopTab) activeDesktopTab.classList.add('active');
+
+      // Update Mobile Bottom Nav Active State
+      document.querySelectorAll('.mobile-nav-btn').forEach(el => el.classList.remove('active'));
+      const activeMobileTab = document.getElementById(`m-nav-${tab}`);
+      if (activeMobileTab) activeMobileTab.classList.add('active');
+
       loadEmails();
     }
 
