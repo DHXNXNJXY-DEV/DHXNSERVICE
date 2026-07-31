@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>DHXN Mail</title>
+  <title>DHXN Glass Mail</title>
   
   <!-- Google Fonts & Material Symbols -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,165 +16,195 @@
 
   <style>
     :root {
-      --gm-bg: #f6f8fc;
-      --gm-surface: #ffffff;
-      --gm-primary: #0b57d0;
-      --gm-primary-hover: #0842a0;
-      --gm-primary-container: #c2e7ff;
-      --gm-on-primary-container: #001d35;
-      --gm-text-main: #1f1f1f;
-      --gm-text-sub: #444746;
-      --gm-border: #e0e3e7;
-      --gm-hover: #eaedf1;
-      --gm-active: #d3e3fd;
-      --gm-shadow: 0 1px 3px 0 rgba(60,64,67,0.3), 0 4px 8px 3px rgba(60,64,67,0.15);
-      --gm-fab-shadow: 0 3px 5px -1px rgba(0,0,0,0.2), 0 6px 10px 0 rgba(0,0,0,0.14), 0 1px 18px 0 rgba(0,0,0,0.12);
+      /* Glassmorphism Design Tokens */
+      --glass-bg: rgba(15, 23, 42, 0.45);
+      --glass-surface: rgba(255, 255, 255, 0.14);
+      --glass-panel: rgba(255, 255, 255, 0.22);
+      --glass-border: rgba(255, 255, 255, 0.28);
+      --glass-blur: blur(20px);
+      --glass-text-main: #ffffff;
+      --glass-text-sub: rgba(255, 255, 255, 0.75);
+      --glass-primary: #38bdf8;
+      --glass-primary-container: rgba(56, 189, 248, 0.35);
+      --glass-hover: rgba(255, 255, 255, 0.18);
+      --glass-active: rgba(56, 189, 248, 0.4);
+      --app-bg-image: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Roboto', sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { background-color: var(--gm-bg); color: var(--gm-text-main); height: 100vh; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
+    
+    body {
+      background: var(--app-bg-image);
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      color: var(--glass-text-main);
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: background 0.4s ease;
+    }
 
     .material-symbols-outlined { font-family: 'Material Symbols Outlined'; font-weight: normal; font-style: normal; font-size: 20px; line-height: 1; display: inline-block; white-space: nowrap; user-select: none; }
 
+    /* Frosted Glass Base Class */
+    .glass-box {
+      background: var(--glass-surface);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    }
+
     /* AUTHENTICATION VIEW */
-    #auth-screen { display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f4f9; padding: 16px; }
-    .g-auth-card { background: var(--gm-surface); width: 100%; max-width: 448px; padding: 40px; border-radius: 28px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); display: flex; flex-direction: column; }
-    
-    .dhxn-logo { width: 52px; height: 52px; margin-bottom: 16px; }
-    .g-title { font-family: 'Google Sans', sans-serif; font-size: 24px; font-weight: 500; color: var(--gm-text-main); margin-bottom: 8px; }
-    .g-subtitle { font-size: 15px; color: var(--gm-text-sub); margin-bottom: 32px; }
+    #auth-screen { display: flex; justify-content: center; align-items: center; height: 100vh; padding: 16px; }
+    .g-auth-card { width: 100%; max-width: 420px; padding: 40px; display: flex; flex-direction: column; }
+    .auth-logo { width: 52px; height: 52px; margin-bottom: 16px; }
+    .g-title { font-family: 'Google Sans', sans-serif; font-size: 24px; font-weight: 500; margin-bottom: 8px; }
+    .g-subtitle { font-size: 14px; color: var(--glass-text-sub); margin-bottom: 32px; }
 
     .g-input-field { position: relative; margin-bottom: 20px; width: 100%; }
-    .g-input { width: 100%; height: 56px; padding: 16px; border: 1px solid #747775; border-radius: 8px; font-size: 16px; outline: none; background: transparent; color: var(--gm-text-main); transition: border-color 0.2s; }
-    .g-input:focus { border-color: var(--gm-primary); border-width: 2px; }
+    .g-input { width: 100%; height: 52px; padding: 16px; border: 1px solid var(--glass-border); border-radius: 8px; font-size: 15px; outline: none; background: rgba(0, 0, 0, 0.2); color: white; }
+    .g-input:focus { border-color: var(--glass-primary); background: rgba(0, 0, 0, 0.35); }
+    .g-label { position: absolute; left: 12px; top: -10px; background: rgba(15, 23, 42, 0.85); padding: 0 6px; font-size: 11px; color: var(--glass-primary); font-weight: 500; border-radius: 4px; }
     
-    .g-label { position: absolute; left: 12px; top: -10px; background: var(--gm-surface); padding: 0 4px; font-size: 12px; color: var(--gm-primary); font-weight: 500; }
-    .domain-badge-text { font-size: 12px; color: var(--gm-text-sub); margin-top: -12px; margin-bottom: 24px; font-weight: 500; }
-
     .g-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
-    .g-btn-text { background: transparent; border: none; color: var(--gm-primary); font-family: 'Google Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; padding: 10px 12px; border-radius: 20px; }
-    .g-btn-text:hover { background: #f0f4f9; }
-    
-    .g-btn-primary { background: var(--gm-primary); color: white; border: none; padding: 10px 24px; border-radius: 20px; font-family: 'Google Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.2s; }
-    .g-btn-primary:hover { background: var(--gm-primary-hover); }
+    .g-btn-text { background: transparent; border: none; color: var(--glass-primary); font-family: 'Google Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; padding: 10px 12px; border-radius: 20px; }
+    .g-btn-primary { background: var(--glass-primary); color: #0f172a; border: none; padding: 10px 24px; border-radius: 20px; font-family: 'Google Sans', sans-serif; font-size: 14px; font-weight: bold; cursor: pointer; }
 
-    /* HEADER */
-    .app-header { height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; background: var(--gm-bg); }
-    .header-left { display: flex; align-items: center; gap: 16px; width: 230px; }
-    .menu-icon { padding: 10px; border-radius: 50%; cursor: pointer; color: var(--gm-text-sub); }
-    .menu-icon:hover { background: var(--gm-hover); }
+    /* TOP HEADER */
+    .app-header { height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; background: rgba(15, 23, 42, 0.3); backdrop-filter: blur(12px); border-bottom: 1px solid var(--glass-border); }
+    .header-left { display: flex; align-items: center; gap: 16px; min-width: 230px; }
+    .menu-btn { padding: 10px; border-radius: 50%; cursor: pointer; color: white; }
+    .menu-btn:hover { background: var(--glass-hover); }
     
-    .app-title { font-family: 'Google Sans', sans-serif; font-size: 22px; color: var(--gm-text-sub); display: flex; align-items: center; gap: 10px; font-weight: 500; }
+    .brand-logo-container { display: flex; align-items: center; gap: 10px; font-family: 'Google Sans', sans-serif; font-size: 22px; color: white; font-weight: 500; }
 
-    .search-container { flex: 1; max-width: 720px; position: relative; }
-    .search-bar { width: 100%; height: 48px; background: #eaf1fb; border: none; border-radius: 24px; padding: 0 20px 0 52px; font-size: 16px; color: var(--gm-text-main); outline: none; }
-    .search-bar:focus { background: var(--gm-surface); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
-    .search-icon { position: absolute; left: 16px; top: 14px; color: var(--gm-text-sub); }
+    /* SEARCH BAR */
+    .search-container { flex: 1; max-width: 720px; position: relative; margin: 0 16px; }
+    .search-bar { width: 100%; height: 46px; background: rgba(255, 255, 255, 0.15); border: 1px solid var(--glass-border); border-radius: 24px; padding: 0 20px 0 52px; font-size: 16px; color: white; outline: none; }
+    .search-bar::placeholder { color: rgba(255, 255, 255, 0.65); }
+    .search-bar:focus { background: rgba(255, 255, 255, 0.25); border-color: var(--glass-primary); }
+    .search-icon { position: absolute; left: 16px; top: 13px; color: rgba(255, 255, 255, 0.7); }
 
     .header-right { display: flex; align-items: center; gap: 12px; }
-    .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: #0b57d0; color: white; font-weight: bold; display: flex; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; }
+    .user-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--glass-primary); color: #0f172a; font-weight: bold; display: flex; align-items: center; justify-content: center; font-size: 15px; cursor: pointer; border: 2px solid white; }
 
-    /* DESKTOP LAYOUT */
-    .app-body { display: flex; flex: 1; height: calc(100vh - 64px); overflow: hidden; position: relative; }
+    /* MAIN WORKSPACE */
+    .app-body { display: flex; flex: 1; height: calc(100vh - 64px); overflow: hidden; position: relative; padding: 8px 16px 16px 16px; gap: 16px; }
 
-    /* SIDEBAR */
-    .sidebar { width: 256px; padding: 8px 12px; display: flex; flex-direction: column; gap: 4px; background: var(--gm-bg); transition: transform 0.25s ease-in-out; }
-    .btn-compose { display: flex; align-items: center; gap: 12px; background: var(--gm-primary-container); color: var(--gm-on-primary-container); padding: 16px 24px; border-radius: 16px; font-family: 'Google Sans', sans-serif; font-weight: 500; font-size: 14px; border: none; cursor: pointer; margin-bottom: 16px; width: fit-content; }
-    .btn-compose:hover { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
+    /* SIDEBAR NAV DRAWER */
+    .sidebar { width: 250px; padding: 8px 12px; display: flex; flex-direction: column; gap: 4px; transition: width 0.2s ease, transform 0.25s ease; flex-shrink: 0; }
+    .sidebar.collapsed { width: 72px; }
+    .sidebar.collapsed .nav-text, .sidebar.collapsed .btn-compose span:not(.material-symbols-outlined) { display: none; }
+    .sidebar.collapsed .btn-compose { padding: 16px; border-radius: 16px; }
 
-    .nav-item { display: flex; align-items: center; gap: 18px; padding: 0 24px; height: 40px; border-radius: 20px; font-size: 14px; font-weight: 500; color: var(--gm-text-sub); cursor: pointer; }
-    .nav-item:hover { background: var(--gm-hover); }
-    .nav-item.active { background: var(--gm-active); color: var(--gm-on-primary-container); font-weight: 700; }
+    .btn-compose { display: flex; align-items: center; gap: 12px; background: var(--glass-primary-container); border: 1px solid var(--glass-primary); color: white; padding: 16px 24px; border-radius: 16px; font-family: 'Google Sans', sans-serif; font-weight: 500; font-size: 14px; cursor: pointer; margin-bottom: 12px; width: fit-content; transition: box-shadow 0.2s; }
+    .btn-compose:hover { box-shadow: 0 4px 16px rgba(56, 189, 248, 0.35); }
 
-    /* MAIL VIEW */
-    .mail-view { flex: 1; background: var(--gm-surface); border-radius: 16px; margin: 0 16px 16px 0; display: flex; flex-direction: column; overflow: hidden; }
-    .mail-toolbar { height: 48px; border-bottom: 1px solid #e0e3e7; display: flex; align-items: center; padding: 0 16px; gap: 16px; color: var(--gm-text-sub); }
+    .nav-item { display: flex; align-items: center; gap: 18px; padding: 0 20px; height: 36px; border-radius: 18px; font-size: 14px; font-weight: 500; color: var(--glass-text-sub); cursor: pointer; }
+    .nav-item:hover { background: var(--glass-hover); color: white; }
+    .nav-item.active { background: var(--glass-active); color: white; font-weight: 700; border: 1px solid var(--glass-border); }
+
+    /* MAIN MAIL VIEW */
+    .mail-view { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+    /* GMAIL CATEGORY TABS */
+    .gmail-tabs { display: flex; border-bottom: 1px solid var(--glass-border); background: rgba(0, 0, 0, 0.1); }
+    .gmail-tab { flex: 1; max-width: 240px; height: 48px; display: flex; align-items: center; justify-content: center; gap: 10px; font-family: 'Google Sans', sans-serif; font-size: 14px; font-weight: 500; color: var(--glass-text-sub); cursor: pointer; border-bottom: 3px solid transparent; }
+    .gmail-tab:hover { background: var(--glass-hover); color: white; }
+    .gmail-tab.active { color: var(--glass-primary); border-bottom-color: var(--glass-primary); font-weight: 700; background: rgba(255, 255, 255, 0.05); }
+
+    /* TOOLBAR */
+    .mail-toolbar { height: 44px; border-bottom: 1px solid var(--glass-border); display: flex; align-items: center; padding: 0 16px; gap: 16px; color: var(--glass-text-sub); }
     .mail-list { flex: 1; overflow-y: auto; }
 
     /* EMAIL ROW */
-    .email-row { display: flex; align-items: center; height: 52px; padding: 0 16px; border-bottom: 1px solid #f2f2f2; cursor: pointer; font-size: 14px; }
-    .email-row:hover { box-shadow: inset 1px 0 0 #dadce0, inset -1px 0 0 #dadce0, 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15); z-index: 1; }
-    .email-row.selected { background: #c2e7ff; }
+    .email-row { display: flex; align-items: center; height: 48px; padding: 0 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); cursor: pointer; font-size: 14px; position: relative; }
+    .email-row:hover { background: rgba(255, 255, 255, 0.18); }
+    .email-row.selected { background: rgba(56, 189, 248, 0.25); }
+    .email-row-actions { display: none; position: absolute; right: 16px; gap: 12px; background: rgba(15, 23, 42, 0.85); padding: 4px 8px; border-radius: 8px; }
+    .email-row:hover .email-row-actions { display: flex; }
     
-    .email-checkbox { margin-right: 16px; cursor: pointer; color: #747775; }
-    .email-row-sender { width: 180px; font-weight: 700; color: var(--gm-text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .email-checkbox { margin-right: 12px; cursor: pointer; color: var(--glass-text-sub); }
+    .email-star { margin-right: 16px; cursor: pointer; color: rgba(255, 255, 255, 0.4); }
+    .email-star.starred { color: #fbbc04; }
+    .email-row-sender { width: 180px; font-weight: 700; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .email-row-content { flex: 1; display: flex; align-items: center; gap: 8px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; padding-right: 16px; }
-    .email-row-subject { font-weight: 500; color: var(--gm-text-main); }
-    .email-row-snippet { color: var(--gm-text-sub); }
-    .email-row-date { font-size: 12px; font-weight: 500; color: var(--gm-text-sub); width: 80px; text-align: right; }
+    .email-row-subject { font-weight: 500; color: white; }
+    .email-row-snippet { color: var(--glass-text-sub); }
+    .email-row-date { font-size: 12px; font-weight: 500; color: var(--glass-text-sub); width: 80px; text-align: right; }
 
-    /* AVATAR CIRCLES FOR MOBILE AND DETAIL VIEW */
-    .row-avatar { width: 40px; height: 40px; border-radius: 50%; color: white; font-weight: bold; font-size: 16px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-right: 16px; }
+    .row-avatar { width: 36px; height: 36px; border-radius: 50%; color: white; font-weight: bold; font-size: 15px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-right: 12px; }
 
-    /* SINGLE EMAIL DETAIL VIEW */
+    /* DETAIL VIEW */
     .email-detail-container { flex: 1; padding: 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
-    .detail-subject { font-family: 'Google Sans', sans-serif; font-size: 22px; color: var(--gm-text-main); font-weight: 400; display: flex; justify-content: space-between; align-items: center; }
+    .detail-subject { font-family: 'Google Sans', sans-serif; font-size: 22px; color: white; font-weight: 400; }
     .detail-sender-card { display: flex; align-items: center; gap: 16px; margin-top: 10px; }
-    .detail-avatar { width: 40px; height: 40px; border-radius: 50%; background: #0b57d0; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; }
+    .detail-avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--glass-primary); color: #0f172a; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; }
     .detail-sender-info { display: flex; flex-direction: column; }
-    .detail-sender-name { font-weight: bold; font-size: 14px; color: var(--gm-text-main); }
-    .detail-sender-email { font-size: 12px; color: var(--gm-text-sub); }
-    .detail-body { font-size: 14px; line-height: 1.6; color: var(--gm-text-main); margin-top: 10px; white-space: pre-wrap; }
+    .detail-sender-name { font-weight: bold; font-size: 15px; color: white; }
+    .detail-sender-email { font-size: 12px; color: var(--glass-text-sub); }
+    .detail-body { font-size: 14px; line-height: 1.6; color: white; margin-top: 12px; white-space: pre-wrap; background: rgba(0, 0, 0, 0.25); padding: 20px; border-radius: 12px; border: 1px solid var(--glass-border); }
 
     /* PREVIEW CARDS */
-    .preview-card { margin-top: 15px; border: 1px solid #e0e3e7; border-radius: 12px; overflow: hidden; max-width: 320px; background: #f8fafc; }
+    .preview-card { margin-top: 15px; border: 1px solid var(--glass-border); border-radius: 12px; overflow: hidden; max-width: 320px; background: rgba(0, 0, 0, 0.3); }
     .preview-card img { width: 100%; max-height: 200px; object-fit: cover; display: block; }
-    .preview-card-info { padding: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 500; color: var(--gm-text-main); }
+    .preview-card-info { padding: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 500; color: white; }
 
-    /* COMPOSE DIALOG (DESKTOP) */
-    .compose-modal { position: fixed; bottom: 0; right: 80px; width: 560px; height: 520px; background: var(--gm-surface); border-radius: 12px 12px 0 0; box-shadow: var(--gm-shadow); display: flex; flex-direction: column; z-index: 200; overflow: hidden; }
-    .compose-header { background: #f2f6fc; height: 40px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; font-family: 'Google Sans', sans-serif; font-size: 14px; font-weight: 500; color: var(--gm-text-main); }
-    .compose-body { flex: 1; padding: 8px 16px; display: flex; flex-direction: column; overflow-y: auto; }
-    .compose-input { width: 100%; border: none; border-bottom: 1px solid #e0e3e7; padding: 8px 0; font-size: 14px; outline: none; }
-    .compose-textarea { flex: 1; width: 100%; border: none; padding-top: 12px; font-size: 14px; outline: none; resize: none; min-height: 150px; }
-    .compose-footer { height: 52px; padding: 8px 16px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #f2f2f2; }
-    .btn-send { background: var(--gm-primary); color: white; border: none; padding: 0 24px; height: 36px; border-radius: 18px; font-family: 'Google Sans', sans-serif; font-weight: 500; font-size: 14px; cursor: pointer; }
+    /* FLOATING COMPOSE WINDOW */
+    .compose-modal { position: fixed; bottom: 0; right: 80px; width: 540px; height: 500px; z-index: 200; overflow: hidden; display: flex; flex-direction: column; border-radius: 12px 12px 0 0; }
+    .compose-header { background: rgba(0, 0, 0, 0.4); height: 40px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; font-family: 'Google Sans', sans-serif; font-size: 14px; font-weight: 500; color: white; border-bottom: 1px solid var(--glass-border); }
+    .compose-body { flex: 1; padding: 12px 16px; display: flex; flex-direction: column; overflow-y: auto; }
+    .compose-input { width: 100%; border: none; border-bottom: 1px solid var(--glass-border); padding: 8px 0; font-size: 14px; outline: none; background: transparent; color: white; }
+    .compose-textarea { flex: 1; width: 100%; border: none; padding-top: 12px; font-size: 14px; outline: none; resize: none; min-height: 150px; background: transparent; color: white; }
+    .compose-footer { height: 52px; padding: 8px 16px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--glass-border); background: rgba(0,0,0,0.3); }
+    .btn-send { background: var(--glass-primary); color: #0f172a; border: none; padding: 0 24px; height: 36px; border-radius: 18px; font-family: 'Google Sans', sans-serif; font-weight: 700; font-size: 14px; cursor: pointer; }
 
     /* SETTINGS MODAL */
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 500; padding: 16px; }
-    .settings-card { background: white; width: 100%; max-width: 440px; padding: 24px; border-radius: 20px; box-shadow: var(--gm-shadow); }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.65); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; z-index: 500; padding: 16px; }
+    .settings-modal { width: 100%; max-width: 480px; padding: 28px; }
+
+    .theme-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
+    .theme-option { height: 50px; border-radius: 10px; border: 2px solid transparent; cursor: pointer; transition: transform 0.2s; background-size: cover; background-position: center; }
+    .theme-option:hover { transform: scale(1.05); }
+    .theme-option.active { border-color: var(--glass-primary); }
 
     .hidden { display: none !important; }
 
-    /* ------------------------------------------------------------- */
-    /* 📱 ANDROID GMAIL APP EXACT RESPONSIVE STYLES                 */
-    /* ------------------------------------------------------------- */
+    /* 📱 MOBILE RESPONSIVE RULES */
     @media (max-width: 768px) {
       .app-header { height: 56px; padding: 0 8px; }
-      .header-left { width: auto; }
-      .app-title span { display: none; } 
-
-      /* Material You Search Bar Pill on Android */
+      .header-left { min-width: auto; }
+      .brand-logo-container span { display: none; }
       .search-container { margin: 0 4px; }
-      .search-bar { height: 48px; font-size: 15px; padding-left: 48px; background: #eaf1fb; border-radius: 24px; }
-      .search-icon { top: 14px; left: 14px; }
+      .search-bar { height: 42px; font-size: 14px; padding-left: 44px; }
+      .search-icon { top: 11px; left: 12px; }
 
-      /* Android Slide-out Navigation Drawer */
-      .sidebar { position: absolute; top: 0; left: 0; bottom: 0; z-index: 300; width: 280px; background: #f6f8fc; box-shadow: var(--gm-shadow); transform: translateX(-100%); padding-top: 24px; border-radius: 0 28px 28px 0; }
+      .app-body { padding: 0; height: calc(100vh - 56px); height: calc(100dvh - 56px); }
+      .mail-view { border-radius: 0; border: none; }
+
+      .sidebar { position: absolute; top: 0; left: 0; bottom: 0; z-index: 300; width: 280px; transform: translateX(-100%); background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(24px); border-radius: 0 24px 24px 0; padding-top: 24px; }
       .sidebar.open { transform: translateX(0); }
-      .sidebar-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.4); z-index: 290; display: none; }
+      .sidebar-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.5); z-index: 290; display: none; }
       .sidebar-overlay.open { display: block; }
 
-      .mail-view { margin: 0; border-radius: 0; height: calc(100vh - 56px); height: calc(100dvh - 56px); }
-
-      /* Android Floating Action Button (FAB) */
-      .btn-compose { position: fixed; right: 16px; bottom: 24px; z-index: 100; padding: 16px 20px; border-radius: 16px; background: var(--gm-primary-container); color: var(--gm-on-primary-container); box-shadow: var(--gm-fab-shadow); margin: 0; }
+      .btn-compose { position: fixed; right: 16px; bottom: 24px; z-index: 100; padding: 16px 20px; border-radius: 16px; background: var(--glass-primary); color: #0f172a; box-shadow: 0 6px 20px rgba(0,0,0,0.4); margin: 0; }
       .btn-compose span:not(.material-symbols-outlined) { display: inline-block; font-weight: bold; }
 
-      /* Android App Email Row (Avatar + Subject + Snippet) */
-      .email-row { height: 80px; padding: 12px 16px; position: relative; }
-      .email-checkbox { display: none; }
-      .email-row-sender { width: auto; font-size: 16px; font-weight: 500; margin-bottom: 2px; }
-      .email-row-content { display: block; padding-right: 24px; }
-      .email-row-subject { font-size: 14px; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--gm-text-main); font-weight: bold; }
-      .email-row-snippet { font-size: 13px; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--gm-text-sub); }
-      .email-row-date { position: absolute; right: 16px; top: 12px; font-size: 12px; font-weight: 500; color: var(--gm-text-sub); }
+      .gmail-tabs { display: none; }
+      .email-row { height: 74px; padding: 12px; }
+      .email-checkbox, .email-star { display: none; }
+      .email-row-sender { width: 100%; font-size: 15px; margin-bottom: 2px; }
+      .email-row-content { display: block; padding-right: 0; }
+      .email-row-subject { font-size: 13px; display: block; overflow: hidden; text-overflow: ellipsis; }
+      .email-row-snippet { font-size: 12px; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .email-row-date { position: absolute; right: 12px; top: 12px; font-size: 11px; }
 
-      /* Fullscreen Android Compose Screen */
       .compose-modal { right: 0; left: 0; top: 0; bottom: 0; width: 100%; height: 100vh; height: 100dvh; border-radius: 0; z-index: 400; }
-      .compose-header { height: 56px; padding: 0 16px; font-size: 18px; background: white; border-bottom: 1px solid var(--gm-border); }
-
-      .g-auth-card { padding: 28px 20px; border-radius: 20px; }
     }
   </style>
 </head>
@@ -182,8 +212,9 @@
 
   <!-- 1. AUTHENTICATION VIEW -->
   <div id="auth-screen">
-    <div class="g-auth-card">
-      <svg class="dhxn-logo" viewBox="0 0 48 48" fill="none">
+    <div class="g-auth-card glass-box">
+      <!-- Custom DHXN Logo SVG (No Google Logo) -->
+      <svg class="auth-logo" viewBox="0 0 48 48" fill="none">
         <rect width="48" height="48" rx="12" fill="#0B57D0"/>
         <path d="M12 16L24 26L36 16" stroke="#C2E7FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
         <rect x="12" y="16" width="24" height="16" rx="3" stroke="white" stroke-width="3"/>
@@ -196,7 +227,7 @@
         <span class="g-label">Username</span>
         <input type="text" id="auth-username" class="g-input" placeholder="e.g. dhxn" autocomplete="off">
       </div>
-      <p class="domain-badge-text">Account Domain: @dhxnservice.com</p>
+      <p style="font-size: 12px; color: var(--glass-text-sub); margin-top: -12px; margin-bottom: 24px;">Domain: @dhxnservice.com</p>
 
       <div class="g-input-field">
         <span class="g-label">Password</span>
@@ -210,59 +241,83 @@
     </div>
   </div>
 
-  <!-- 2. MAIN MAIL APPLICATION -->
+  <!-- 2. MAIN APPLICATION -->
   <div id="app-screen" class="hidden" style="height: 100vh; height: 100dvh; display: flex; flex-direction: column;">
     
-    <!-- Top Bar Header (Material You Search Bar) -->
+    <!-- Header Toolbar -->
     <header class="app-header">
-      <div class="search-container" style="display: flex; align-items: center; width: 100%;">
-        <span class="material-symbols-outlined search-icon" style="left: 16px; cursor: pointer;" onclick="toggleMobileSidebar()">menu</span>
-        <input type="text" class="search-bar" placeholder="Search in mail">
-        <div class="user-avatar" id="avatar-badge" onclick="toggleSettingsModal(true)" style="position: absolute; right: 8px;" title="Account Settings">D</div>
+      <div class="header-left">
+        <span class="material-symbols-outlined menu-btn" onclick="toggleSidebarCollapse()">menu</span>
+        <div class="brand-logo-container">
+          <svg width="28" height="28" viewBox="0 0 48 48" fill="none">
+            <rect width="48" height="48" rx="10" fill="#0B57D0"/>
+            <path d="M12 16L24 26L36 16" stroke="#C2E7FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="12" y="16" width="24" height="16" rx="3" stroke="white" stroke-width="3"/>
+          </svg>
+          <span>DHXN Mail</span>
+        </div>
+      </div>
+
+      <div class="search-container">
+        <span class="material-symbols-outlined search-icon">search</span>
+        <input type="text" class="search-bar" placeholder="Search mail">
+      </div>
+
+      <div class="header-right">
+        <span class="material-symbols-outlined menu-btn" onclick="toggleSettingsModal(true)">tune</span>
+        <div class="user-avatar" id="avatar-badge" onclick="toggleSettingsModal(true)" title="Account Settings">D</div>
       </div>
     </header>
 
-    <!-- App Body -->
+    <!-- Workspace Body -->
     <div class="app-body">
       
-      <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleMobileSidebar()"></div>
+      <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebarCollapse()"></div>
 
-      <!-- Left Sidebar Navigation Drawer -->
-      <aside class="sidebar" id="sidebar">
-        <div style="padding: 0 24px 16px 24px; font-family: 'Google Sans', sans-serif; font-size: 20px; color: var(--gm-primary); font-weight: bold;">
-          DHXN Mail
-        </div>
+      <!-- Left Sidebar Navigation -->
+      <aside class="sidebar glass-box" id="sidebar">
+        <button class="btn-compose" onclick="toggleCompose(true)">
+          <span class="material-symbols-outlined">edit</span>
+          <span class="nav-text">Compose</span>
+        </button>
 
         <div id="nav-inbox" class="nav-item active" onclick="switchTab('inbox')">
           <span class="material-symbols-outlined">inbox</span>
-          <span>Inbox</span>
+          <span class="nav-text">Inbox</span>
         </div>
 
         <div id="nav-sent" class="nav-item" onclick="switchTab('sent')">
           <span class="material-symbols-outlined">send</span>
-          <span>Sent</span>
+          <span class="nav-text">Sent</span>
         </div>
 
         <div id="nav-archive" class="nav-item" onclick="switchTab('archive')">
           <span class="material-symbols-outlined">archive</span>
-          <span>Archive</span>
+          <span class="nav-text">Archive</span>
         </div>
 
         <div id="nav-trash" class="nav-item" onclick="switchTab('trash')">
           <span class="material-symbols-outlined">delete</span>
-          <span>Trash</span>
+          <span class="nav-text">Trash</span>
         </div>
 
         <div class="nav-item" style="margin-top: auto;" onclick="toggleSettingsModal(true)">
           <span class="material-symbols-outlined">settings</span>
-          <span>Settings</span>
+          <span class="nav-text">Settings</span>
         </div>
       </aside>
 
-      <!-- Central Mail View -->
-      <main class="mail-view">
+      <!-- Central Gmail View -->
+      <main class="mail-view glass-box">
         
-        <!-- List Toolbar -->
+        <!-- Category Tabs -->
+        <div class="gmail-tabs">
+          <div class="gmail-tab active"><span class="material-symbols-outlined">inbox</span> Primary</div>
+          <div class="gmail-tab"><span class="material-symbols-outlined">sell</span> Promotions</div>
+          <div class="gmail-tab"><span class="material-symbols-outlined">group</span> Social</div>
+        </div>
+
+        <!-- Toolbar -->
         <div class="mail-toolbar" id="list-toolbar">
           <span class="material-symbols-outlined" id="select-all-checkbox" style="cursor: pointer;" onclick="toggleSelectAll()">check_box_outline_blank</span>
           <span class="material-symbols-outlined" style="cursor: pointer;" onclick="loadEmails()">refresh</span>
@@ -280,17 +335,11 @@
           <span class="material-symbols-outlined" style="cursor: pointer;" title="Delete" onclick="singleDelete()">delete</span>
         </div>
 
-        <!-- Email List Container -->
+        <!-- Mail List -->
         <div class="mail-list" id="mail-list-container"></div>
 
-        <!-- Email Single Detail View -->
+        <!-- Single Email Detail View -->
         <div class="email-detail-container hidden" id="email-detail-view"></div>
-
-        <!-- Android Extended FAB Compose Button -->
-        <button class="btn-compose" onclick="toggleCompose(true)">
-          <span class="material-symbols-outlined">edit</span>
-          <span>Compose</span>
-        </button>
 
       </main>
 
@@ -299,47 +348,62 @@
   </div>
 
   <!-- 3. COMPOSE DIALOG -->
-  <div id="compose-dialog" class="compose-modal hidden">
+  <div id="compose-dialog" class="compose-modal glass-box hidden">
     <div class="compose-header">
-      <span>Compose</span>
-      <div style="display: flex; gap: 16px; align-items: center;">
-        <label for="msg-file" style="cursor: pointer; display: flex; align-items: center;">
-          <span class="material-symbols-outlined" style="color: var(--gm-text-sub);">attach_file</span>
-        </label>
-        <input type="file" id="msg-file" class="hidden" onchange="previewSelectedFile(event)">
-        <span class="material-symbols-outlined" style="color: var(--gm-primary); cursor: pointer;" id="send-btn" onclick="sendEmail()">send</span>
-        <span class="material-symbols-outlined" style="cursor: pointer;" onclick="toggleCompose(false)">close</span>
-      </div>
+      <span>New Message</span>
+      <span class="material-symbols-outlined" style="cursor: pointer;" onclick="toggleCompose(false)">close</span>
     </div>
 
     <div class="compose-body">
-      <input type="text" id="msg-to" class="compose-input" placeholder="To">
+      <input type="text" id="msg-to" class="compose-input" placeholder="Recipients">
       <input type="text" id="msg-subject" class="compose-input" placeholder="Subject">
-      <textarea id="msg-body" class="compose-textarea" placeholder="Compose email"></textarea>
+      <textarea id="msg-body" class="compose-textarea" placeholder="Write message..."></textarea>
       
       <div id="compose-file-preview"></div>
     </div>
+
+    <div class="compose-footer">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <button class="btn-send" id="send-btn" onclick="sendEmail()">Send</button>
+
+        <label for="msg-file" style="cursor: pointer; display: flex; align-items: center;">
+          <span class="material-symbols-outlined" style="color: var(--glass-text-sub);">attach_file</span>
+        </label>
+        <input type="file" id="msg-file" class="hidden" onchange="previewSelectedFile(event)">
+      </div>
+
+      <span class="material-symbols-outlined" style="color: var(--glass-text-sub); cursor: pointer;" onclick="toggleCompose(false)">delete</span>
+    </div>
   </div>
 
-  <!-- 4. ACCOUNT SETTINGS MODAL -->
+  <!-- 4. SETTINGS & BACKGROUND MODAL -->
   <div id="settings-modal" class="modal-overlay hidden">
-    <div class="settings-card">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h3 style="font-family: 'Google Sans', sans-serif;">Account Settings</h3>
+    <div class="settings-modal glass-box">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+        <h3 style="font-family: 'Google Sans', sans-serif;">Settings & Customization</h3>
         <span class="material-symbols-outlined" style="cursor: pointer;" onclick="toggleSettingsModal(false)">close</span>
       </div>
 
-      <p style="font-size: 13px; color: var(--gm-text-sub); margin-bottom: 16px;" id="settings-user-email"></p>
-
-      <label style="font-size: 12px; font-weight: bold; color: var(--gm-text-sub);">Change Password</label>
-      <div style="display: flex; gap: 8px; margin-top: 6px; margin-bottom: 20px;">
-        <input type="password" id="new-password" class="g-input" placeholder="New Password" style="height: 44px;">
-        <button class="g-btn-primary" style="height: 44px; padding: 0 16px;" onclick="updatePassword()">Update</button>
+      <label style="font-size: 13px; font-weight: bold; margin-bottom: 8px; display: block; color: var(--glass-primary);">Choose Glass Background Preset:</label>
+      <div class="theme-grid">
+        <div class="theme-option active" style="background-image: linear-gradient(135deg, #0f172a, #1e1b4b, #311042);" onclick="setBgTheme('nebula')"></div>
+        <div class="theme-option" style="background-image: linear-gradient(135deg, #4c1d95, #831843, #991b1b);" onclick="setBgTheme('sunset')"></div>
+        <div class="theme-option" style="background-image: linear-gradient(135deg, #022c22, #064e3b, #0f172a);" onclick="setBgTheme('emerald')"></div>
+        <div class="theme-option" style="background-image: linear-gradient(135deg, #18181b, #27272a, #09090b);" onclick="setBgTheme('cyber')"></div>
       </div>
 
-      <div style="border-top: 1px solid var(--gm-border); padding-top: 16px; display: flex; justify-content: space-between;">
-        <button class="g-btn-text" style="color: #d93025;" onclick="deleteAccount()">Delete Account</button>
-        <button class="g-btn-primary" style="background: #475569;" onclick="logout()">Sign Out</button>
+      <label style="font-size: 13px; font-weight: bold; margin-bottom: 6px; display: block; color: var(--glass-primary);">Custom Image Background URL:</label>
+      <input type="text" class="g-input" placeholder="https://images.unsplash.com/..." style="height: 42px; margin-bottom: 20px;" onchange="applyCustomBg(this.value)">
+
+      <label style="font-size: 13px; font-weight: bold; margin-bottom: 6px; display: block; color: var(--glass-primary);">Change Account Password:</label>
+      <div style="display: flex; gap: 8px; margin-bottom: 24px;">
+        <input type="password" id="new-password" class="g-input" placeholder="New Password" style="height: 42px;">
+        <button class="g-btn-primary" style="padding: 0 16px; height: 42px;" onclick="updatePassword()">Update</button>
+      </div>
+
+      <div style="border-top: 1px solid var(--glass-border); padding-top: 16px; display: flex; justify-content: space-between;">
+        <button class="g-btn-text" style="color: #ef4444;" onclick="deleteAccount()">Delete Account</button>
+        <button class="g-btn-primary" style="background: rgba(255,255,255,0.2); color: white;" onclick="logout()">Sign Out</button>
       </div>
     </div>
   </div>
@@ -358,9 +422,7 @@
     let selectedEmailIds = new Set();
     let currentOpenedEmailId = null;
 
-    // Vibrant avatar colors for Android contact circles
     const avatarColors = ['#0b57d0', '#c2185b', '#7b1fa2', '#388e3c', '#e65100', '#0097a7', '#d32f2f'];
-
     function getAvatarColor(str) {
       let hash = 0;
       for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
@@ -394,7 +456,6 @@
         currentUser = session.user;
         const initial = currentUser.email.charAt(0).toUpperCase();
         document.getElementById('avatar-badge').innerText = initial;
-        document.getElementById('settings-user-email').innerText = "Logged in as: " + currentUser.email;
         document.getElementById('auth-screen').classList.add('hidden');
         document.getElementById('app-screen').classList.remove('hidden');
         loadEmails();
@@ -410,32 +471,50 @@
       checkSession();
     }
 
-    // SETTINGS: PASSWORD & ACCOUNT DELETION
+    function toggleSidebarCollapse() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+      if (window.innerWidth <= 768) {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('open');
+      } else {
+        sidebar.classList.toggle('collapsed');
+      }
+    }
+
+    function setBgTheme(theme) {
+      const presets = {
+        nebula: "linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%)",
+        sunset: "linear-gradient(135deg, #4c1d95 0%, #831843 50%, #991b1b 100%)",
+        emerald: "linear-gradient(135deg, #022c22 0%, #064e3b 50%, #0f172a 100%)",
+        cyber: "linear-gradient(135deg, #18181b 0%, #27272a 50%, #09090b 100%)"
+      };
+      document.body.style.backgroundImage = presets[theme];
+    }
+
+    function applyCustomBg(url) {
+      if (url) document.body.style.backgroundImage = `url('${url}')`;
+    }
+
     async function updatePassword() {
       const newPass = document.getElementById('new-password').value;
       if (!newPass || newPass.length < 6) return alert("Password must be at least 6 characters!");
-
       const { error } = await db.auth.updateUser({ password: newPass });
-      if (error) alert("Error updating password: " + error.message);
+      if (error) alert("Error: " + error.message);
       else {
-        alert("Password updated successfully!");
+        alert("Password updated!");
         document.getElementById('new-password').value = '';
       }
     }
 
     async function deleteAccount() {
-      if (!confirm("Are you sure you want to delete your account? This action cannot be undone.")) return;
-      alert("Please contact database admin to remove authentication credentials.");
+      if (!confirm("Are you sure you want to delete your account?")) return;
+      alert("Account deletion request submitted.");
       logout();
     }
 
     function toggleSettingsModal(show) {
       document.getElementById('settings-modal').classList.toggle('hidden', !show);
-    }
-
-    function toggleMobileSidebar() {
-      document.getElementById('sidebar').classList.toggle('open');
-      document.getElementById('sidebar-overlay').classList.toggle('open');
     }
 
     // FETCH EMAILS AND DISPLAY IN INBOX LIST
@@ -445,28 +524,23 @@
       updateBatchActionsUI();
 
       const listContainer = document.getElementById('mail-list-container');
-      listContainer.innerHTML = "<p style='padding:20px; color:var(--gm-text-sub);'>Loading...</p>";
+      listContainer.innerHTML = "<p style='padding:20px; color:var(--glass-text-sub);'>Loading...</p>";
 
       if (!currentUser) return;
 
       let query = db.from('emails').select('*');
 
-      if (currentTab === 'inbox') {
-        query = query.eq('recipient', currentUser.email);
-      } else if (currentTab === 'sent') {
-        query = query.eq('sender', currentUser.email);
-      } else if (currentTab === 'archive') {
-        query = query.eq('recipient', currentUser.email).eq('is_archived', true);
-      } else if (currentTab === 'trash') {
-        query = query.or(`sender.eq.${currentUser.email},recipient.eq.${currentUser.email}`).eq('is_deleted', true);
-      }
+      if (currentTab === 'inbox') query = query.eq('recipient', currentUser.email);
+      else if (currentTab === 'sent') query = query.eq('sender', currentUser.email);
+      else if (currentTab === 'archive') query = query.eq('recipient', currentUser.email).eq('is_archived', true);
+      else if (currentTab === 'trash') query = query.or(`sender.eq.${currentUser.email},recipient.eq.${currentUser.email}`).eq('is_deleted', true);
 
       query = query.order('created_at', { ascending: false });
 
       const { data: emails, error } = await query;
 
       if (error) {
-        listContainer.innerHTML = `<p style='padding:20px; color:#d93025;'>Error: ${error.message}</p>`;
+        listContainer.innerHTML = `<p style='padding:20px; color:#ef4444;'>Error: ${error.message}</p>`;
         return;
       }
 
@@ -476,7 +550,7 @@
       }
 
       if (filteredEmails.length === 0) {
-        listContainer.innerHTML = `<p style='padding:40px; text-align:center; color:var(--gm-text-sub);'>Your ${currentTab} is empty.</p>`;
+        listContainer.innerHTML = `<p style='padding:40px; text-align:center; color:var(--glass-text-sub);'>Your ${currentTab} is empty.</p>`;
         return;
       }
 
@@ -491,23 +565,27 @@
         return `
           <div class="email-row" id="row-${e.id}">
             <span class="material-symbols-outlined email-checkbox" id="chk-${e.id}" onclick="event.stopPropagation(); toggleSelectRow('${e.id}')">check_box_outline_blank</span>
+            <span class="material-symbols-outlined email-star" onclick="event.stopPropagation(); this.classList.toggle('starred')">star</span>
             <div class="row-avatar" style="background:${avatarBg};">${initial}</div>
-            <div class="email-row-content" onclick="openEmailDetail('${e.id}')" style="flex:1;">
-              <div class="email-row-sender">${displayUser}</div>
-              <div class="email-row-subject">${e.subject || '(no subject)'}</div>
-              <div class="email-row-snippet">${e.body.substring(0, 50)}...</div>
+            <div class="email-row-sender" onclick="openEmailDetail('${e.id}')">${displayUser}</div>
+            <div class="email-row-content" onclick="openEmailDetail('${e.id}')">
+              <span class="email-row-subject">${e.subject || '(no subject)'}</span>
+              <span class="email-row-snippet">- ${e.body.substring(0, 50)}...</span>
             </div>
             <div class="email-row-date" onclick="openEmailDetail('${e.id}')">${new Date(e.created_at || Date.now()).toLocaleDateString([], {month:'short', day:'numeric'})}</div>
+            
+            <div class="email-row-actions">
+              <span class="material-symbols-outlined" style="color:white; cursor:pointer;" title="Archive" onclick="event.stopPropagation(); singleArchiveRow('${e.id}')">archive</span>
+              <span class="material-symbols-outlined" style="color:white; cursor:pointer;" title="Delete" onclick="event.stopPropagation(); singleDeleteRow('${e.id}')">delete</span>
+            </div>
           </div>
         `;
       }).join('');
     }
 
-    // SELECT / CHECKBOX HANDLING
     function toggleSelectRow(emailId) {
       const chk = document.getElementById(`chk-${emailId}`);
       const row = document.getElementById(`row-${emailId}`);
-
       if (selectedEmailIds.has(emailId)) {
         selectedEmailIds.delete(emailId);
         if (chk) chk.innerText = 'check_box_outline_blank';
@@ -552,15 +630,20 @@
       else batchBox.classList.add('hidden');
     }
 
-    // DELETE & ARCHIVE ACTIONS
+    async function singleDeleteRow(id) {
+      await db.from('emails').update({ is_deleted: true }).eq('id', id);
+      loadEmails();
+    }
+
+    async function singleArchiveRow(id) {
+      await db.from('emails').update({ is_archived: true }).eq('id', id);
+      loadEmails();
+    }
+
     async function batchDelete() {
       if (selectedEmailIds.size === 0) return;
       const ids = Array.from(selectedEmailIds);
-      if (currentTab === 'trash') {
-        await db.from('emails').delete().in('id', ids);
-      } else {
-        await db.from('emails').update({ is_deleted: true }).in('id', ids);
-      }
+      await db.from('emails').update({ is_deleted: true }).in('id', ids);
       loadEmails();
     }
 
@@ -571,23 +654,6 @@
       loadEmails();
     }
 
-    async function singleDelete() {
-      if (!currentOpenedEmailId) return;
-      if (currentTab === 'trash') {
-        await db.from('emails').delete().eq('id', currentOpenedEmailId);
-      } else {
-        await db.from('emails').update({ is_deleted: true }).eq('id', currentOpenedEmailId);
-      }
-      loadEmails();
-    }
-
-    async function singleArchive() {
-      if (!currentOpenedEmailId) return;
-      await db.from('emails').update({ is_archived: true }).eq('id', currentOpenedEmailId);
-      loadEmails();
-    }
-
-    // OPEN SINGLE EMAIL (READ VIEW)
     function openEmailDetail(emailId) {
       currentOpenedEmailId = emailId;
       const email = loadedEmailsMap[emailId];
@@ -601,34 +667,29 @@
       detailView.classList.remove('hidden');
 
       const senderInitial = email.sender.charAt(0).toUpperCase();
-
-      let attachmentHTML = '';
-      const attachmentMatch = email.body.match(/📎 Attachment: (.*?)\n(https?:\/\/[^\s]+)/);
       let cleanBody = email.body;
+      let attachmentHTML = '';
 
+      const attachmentMatch = email.body.match(/📎 Attachment: (.*?)\n(https?:\/\/[^\s]+)/);
       if (attachmentMatch) {
         const fileName = attachmentMatch[1];
         const fileUrl = attachmentMatch[2];
         cleanBody = email.body.replace(attachmentMatch[0], '');
-
         const isImage = fileUrl.match(/\.(jpeg|jpg|gif|png|webp)/i);
 
         attachmentHTML = `
           <div class="preview-card">
-            ${isImage ? `<img src="${fileUrl}" alt="Attached preview">` : ''}
+            ${isImage ? `<img src="${fileUrl}">` : ''}
             <div class="preview-card-info">
               <span>${fileName}</span>
-              <a href="${fileUrl}" target="_blank" style="color: var(--gm-primary); text-decoration: none; font-weight: bold;">Download</a>
+              <a href="${fileUrl}" target="_blank" style="color:var(--glass-primary); font-weight:bold; text-decoration:none;">Download</a>
             </div>
           </div>
         `;
       }
 
       detailView.innerHTML = `
-        <div class="detail-subject">
-          <span>${email.subject || '(no subject)'}</span>
-        </div>
-
+        <div class="detail-subject">${email.subject || '(no subject)'}</div>
         <div class="detail-sender-card">
           <div class="detail-avatar">${senderInitial}</div>
           <div class="detail-sender-info">
@@ -636,7 +697,6 @@
             <span class="detail-sender-email">From: ${email.sender} | To: ${email.recipient}</span>
           </div>
         </div>
-
         <div class="detail-body">${cleanBody}</div>
         ${attachmentHTML}
       `;
@@ -652,33 +712,20 @@
 
     function switchTab(tab) {
       currentTab = tab;
-      
-      document.getElementById('sidebar').classList.remove('open');
-      document.getElementById('sidebar-overlay').classList.remove('open');
-
       document.querySelectorAll('.sidebar .nav-item').forEach(el => el.classList.remove('active'));
-      const activeDesktopTab = document.getElementById(`nav-${tab}`);
-      if (activeDesktopTab) activeDesktopTab.classList.add('active');
-
+      const activeTab = document.getElementById(`nav-${tab}`);
+      if (activeTab) activeTab.classList.add('active');
       loadEmails();
     }
 
     function toggleCompose(show) {
       document.getElementById('compose-dialog').classList.toggle('hidden', !show);
-      if (!show) {
-        document.getElementById('compose-file-preview').innerHTML = '';
-        document.getElementById('msg-file').value = '';
-      }
     }
 
     function previewSelectedFile(event) {
       const file = event.target.files[0];
       const previewContainer = document.getElementById('compose-file-preview');
-
-      if (!file) {
-        previewContainer.innerHTML = '';
-        return;
-      }
+      if (!file) return;
 
       const isImage = file.type.startsWith('image/');
       const fileUrl = URL.createObjectURL(file);
@@ -686,15 +733,11 @@
       previewContainer.innerHTML = `
         <div class="preview-card">
           ${isImage ? `<img src="${fileUrl}">` : ''}
-          <div class="preview-card-info">
-            <span>${file.name}</span>
-            <span style="font-size: 11px; color: var(--gm-text-sub);">${(file.size / 1024).toFixed(1)} KB</span>
-          </div>
+          <div class="preview-card-info"><span>${file.name}</span></div>
         </div>
       `;
     }
 
-    // SEND MESSAGE WITH ATTACHMENTS
     async function sendEmail() {
       let recipientInput = document.getElementById('msg-to').value.trim().toLowerCase();
       const subject = document.getElementById('msg-subject').value;
@@ -702,20 +745,14 @@
       const fileInput = document.getElementById('msg-file');
 
       if (!recipientInput || !body) return alert("Recipient and body required!");
-
       let fullRecipient = recipientInput.includes('@') ? recipientInput : `${recipientInput}@dhxnservice.com`;
-      const sendBtn = document.getElementById('send-btn');
 
       try {
-        sendBtn.innerText = "hourglass_empty";
-
         if (fileInput.files.length > 0) {
           const file = fileInput.files[0];
-          const fileExt = file.name.split('.').pop();
-          const fileName = `${Date.now()}.${fileExt}`;
-
+          const fileName = `${Date.now()}.${file.name.split('.').pop()}`;
           const { error: uploadError } = await db.storage.from('attachments').upload(fileName, file);
-          if (uploadError) throw new Error("File upload failed: " + uploadError.message);
+          if (uploadError) throw uploadError;
 
           const { data: { publicUrl } } = db.storage.from('attachments').getPublicUrl(fileName);
           body += `\n\n📎 Attachment: ${file.name}\n${publicUrl}`;
@@ -734,15 +771,11 @@
         document.getElementById('msg-to').value = '';
         document.getElementById('msg-subject').value = '';
         document.getElementById('msg-body').value = '';
-        document.getElementById('compose-file-preview').innerHTML = '';
-        fileInput.value = '';
         toggleCompose(false);
         switchTab('sent');
 
       } catch (err) {
         alert("Error: " + err.message);
-      } finally {
-        sendBtn.innerText = "send";
       }
     }
 
